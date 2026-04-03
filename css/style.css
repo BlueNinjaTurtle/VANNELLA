@@ -39,3 +39,9 @@ h2, .navbar-brand {
     padding: 0.5em 0.8em;
     font-weight: 700;
 }
+
+/* Background image for home page */
+.bg-home {
+    background: linear-gradient(rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.85)), url('../bg.jpg') no-repeat center center fixed;
+    background-size: cover;
+}

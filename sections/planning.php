@@ -1,29 +1,30 @@
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2 class="fw-bold">Attribution de Salle</h2>
-    <div class="text-muted" id="current-date"></div>
-</div>
-
 <div class="row">
     <div class="col-lg-8">
-        <div class="card admin-card p-4">
-            <h5 class="mb-4">Nouvel Horaire de Cours</h5>
+        <div class="card admin-card">
+            <div class="d-flex align-items-center mb-4">
+                <div class="bg-primary-soft p-2 rounded-3 me-3">
+                    <i class="fas fa-calendar-plus text-primary fs-4"></i>
+                </div>
+                <h5 class="mb-0 fw-bold">Nouvel Horaire de Cours</h5>
+            </div>
+            
             <form id="planning-form">
-                <div class="row g-3">
+                <div class="row g-4">
                     <div class="col-md-6">
-                        <label class="form-label">Cours</label>
-                        <select id="select-cours" class="form-select" required>
-                            <option value="">Chargement...</option>
+                        <label class="form-label fw-semibold small text-muted">Cours / Matière</label>
+                        <select id="select-cours" class="form-select border-0 bg-light py-2" required>
+                            <option value="">Sélectionner un cours...</option>
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-label">Promotion</label>
-                        <select id="select-promotion" class="form-select" required>
-                            <option value="">Chargement...</option>
+                        <label class="form-label fw-semibold small text-muted">Promotion</label>
+                        <select id="select-promotion" class="form-select border-0 bg-light py-2" required>
+                            <option value="">Sélectionner une promotion...</option>
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Jour</label>
-                        <select id="select-jour" class="form-select" required>
+                        <label class="form-label fw-semibold small text-muted">Jour</label>
+                        <select id="select-jour" class="form-select border-0 bg-light py-2" required>
                             <option value="Lundi">Lundi</option>
                             <option value="Mardi">Mardi</option>
                             <option value="Mercredi">Mercredi</option>
@@ -33,45 +34,57 @@
                         </select>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Heure Début</label>
-                        <input type="time" id="heure-debut" class="form-control" required>
+                        <label class="form-label fw-semibold small text-muted">Heure Début</label>
+                        <input type="time" id="heure-debut" class="form-control border-0 bg-light py-2" required>
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Heure Fin</label>
-                        <input type="time" id="heure-fin" class="form-control" required>
+                        <label class="form-label fw-semibold small text-muted">Heure Fin</label>
+                        <input type="time" id="heure-fin" class="form-control border-0 bg-light py-2" required>
                     </div>
                 </div>
 
-                <hr class="my-4">
+                <div class="my-4 border-top border-light"></div>
 
-                <div class="bg-light p-3 rounded mb-4 d-flex justify-content-between align-items-center">
+                <div class="p-3 rounded-4 mb-4 d-flex justify-content-between align-items-center" style="background: #f8fafc; border: 1px dashed #e2e8f0;">
                     <div>
-                        <h6 class="mb-1 fw-bold">Salle Attribuée :</h6>
-                        <div id="selected-room-info" class="text-primary fw-bold">Aucune salle sélectionnée</div>
+                        <h6 class="mb-1 fw-bold small text-uppercase text-muted" style="letter-spacing: 0.5px;">Salle Attribuée :</h6>
+                        <div id="selected-room-info" class="text-primary fw-bold fs-5">Aucune salle sélectionnée</div>
                     </div>
-                    <button type="button" id="btn-optimize" class="btn btn-dark btn-sm shadow-sm">
-                        <i class="fas fa-magic me-1"></i> Attribution Optimale
+                    <button type="button" id="btn-optimize" class="btn btn-white shadow-sm border py-2 px-3">
+                        <i class="fas fa-magic text-primary me-2"></i> Optimiser
                     </button>
                 </div>
 
-                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">
-                    ENREGISTRER L'HORAIRE
+                <button type="submit" class="btn btn-primary w-100 py-3 fw-bold rounded-3 shadow-sm">
+                    <i class="fas fa-save me-2"></i> ENREGISTRER L'HORAIRE
                 </button>
             </form>
         </div>
     </div>
 
-    <div class="col-lg-4">
-        <div class="card admin-card p-4 h-100">
-            <h5 class="mb-3">Aide à l'Optimisation</h5>
-            <p class="small text-muted">L'algorithme analyse :</p>
-            <ul class="small text-muted">
-                <li>L'effectif réel de la promotion.</li>
-                <li>Les conflits d'horaires existants.</li>
-                <li>La capacité résiduelle des salles (évite le gaspillage).</li>
+    <div class="col-lg-4 mt-4 mt-lg-0">
+        <div class="card admin-card border-0" style="background: linear-gradient(135deg, var(--ispt-primary), #003366); color: white;">
+            <div class="d-flex align-items-center mb-4">
+                <i class="fas fa-lightbulb fs-4 me-3 opacity-75"></i>
+                <h5 class="mb-0 fw-bold">Optimisation</h5>
+            </div>
+            <p class="small opacity-75">L'algorithme intelligent de l'ISPT analyse plusieurs critères pour garantir le meilleur confort :</p>
+            <ul class="list-unstyled small mb-4">
+                <li class="mb-2 d-flex align-items-start">
+                    <i class="fas fa-check-circle me-2 mt-1 opacity-50"></i>
+                    Effectif réel vs Capacité
+                </li>
+                <li class="mb-2 d-flex align-items-start">
+                    <i class="fas fa-check-circle me-2 mt-1 opacity-50"></i>
+                    Conflits d'horaires
+                </li>
+                <li class="mb-2 d-flex align-items-start">
+                    <i class="fas fa-check-circle me-2 mt-1 opacity-50"></i>
+                    Proximité des départements
+                </li>
             </ul>
-            <div id="optimization-log" class="mt-auto">
-                <!-- Feedback messages -->
+            <div id="optimization-log" class="mt-auto bg-white bg-opacity-10 p-3 rounded-3" style="min-height: 100px;">
+                <em class="small opacity-50">En attente d'analyse...</em>
             </div>
         </div>
     </div>

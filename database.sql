@@ -95,6 +95,7 @@ INSERT INTO etat_salles (id_salle, etat) VALUES
 (2, 'libre'),
 (3, 'libre');
 
--- Admin par défaut (password: admin123)
+-- Admin par défaut (ADMIN / ISPT2026)
 INSERT INTO admins (username, password, nom_complet) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'Administrateur Principal');
+('ADMIN', '$2y$10$CtRs7eq.fcCsafbe8.RnNuCXwhd43/6avZf6.O846f5MMGki5omWi', 'Administrateur Principal');
+

@@ -35,18 +35,20 @@
         .bg-reservee { background-color: #ffc107; }
     </style>
 </head>
-<body class="bg-light">
+<body class="bg-home">
 
     <!-- Navbar simulée ISPT-Likasi -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-ispt mb-4">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="index.php">
                 <i class="fa-solid fa-school me-2"></i>
                 <strong>ISPT-LIKASI</strong>
             </a>
-            <span class="navbar-text text-white d-none d-md-block">
-                Module de Gestion des Salles en Temps Réel
-            </span>
+            <div class="ms-auto">
+                <a href="login.php" class="btn btn-outline-light btn-sm rounded-pill px-3">
+                    <i class="fas fa-user-shield me-1"></i> Connexion Admin
+                </a>
+            </div>
         </div>
     </nav>
 

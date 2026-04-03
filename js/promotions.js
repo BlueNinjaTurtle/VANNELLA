@@ -10,25 +10,41 @@ $(document).ready(function() {
         $.get('api/getPromotionsFull.php', function(res) {
             if(res.status === 'success') {
                 let html = '';
-                res.data.forEach(p => {
-                    html += `
-                        <tr>
-                            <td>${p.nom_promotion}</td>
-                            <td>${p.nom_departement || '<span class="text-danger">Non défini</span>'}</td>
-                            <td>${p.filiere}</td>
-                            <td>${p.niveau}</td>
-                            <td><span class="badge bg-secondary">${p.effectif} étud.</span></td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary btn-edit-promo" data-promo='${JSON.stringify(p)}'>
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger btn-delete-promo" data-id="${p.id_promotion}">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
+                if(res.data.length === 0) {
+                    html = '<tr><td colspan="5" class="text-center py-4 text-muted">Aucune promotion trouvée</td></tr>';
+                } else {
+                    res.data.forEach(p => {
+                        const deptBadge = p.nom_departement 
+                            ? `<span class="badge bg-light text-primary border px-2 py-1">${p.nom_departement}</span>`
+                            : '<span class="badge bg-light text-danger border px-2 py-1">Non défini</span>';
+                        
+                        html += `
+                            <tr>
+                                <td class="ps-4 fw-bold text-dark">${p.nom_promotion}</td>
+                                <td>${deptBadge}</td>
+                                <td>
+                                    <div class="small fw-semibold text-dark">${p.filiere}</div>
+                                    <div class="small text-muted">${p.niveau}</div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-primary-soft text-primary px-3 py-2 border-0" style="font-size: 0.85rem;">
+                                        ${p.effectif} étud.
+                                    </span>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-white border shadow-sm btn-edit-promo px-3" data-promo='${JSON.stringify(p)}' data-bs-toggle="modal" data-bs-target="#modalPromo" title="Modifier">
+                                            <i class="fas fa-pen text-primary"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-white border shadow-sm btn-delete-promo px-3 ms-2" data-id="${p.id_promotion}" title="Supprimer">
+                                            <i class="fas fa-trash-alt text-danger"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
                 $('#table-promotions').html(html);
             }
         });
@@ -37,18 +53,16 @@ $(document).ready(function() {
     function loadDepartments() {
         $.get('api/getDepartments.php', function(res) {
             if(res.status === 'success') {
-                // Pour le select
                 let selectHtml = '<option value="">Choisir un département...</option>';
-                // Pour la liste simple
                 let listHtml = '';
 
                 res.data.forEach(d => {
                     selectHtml += `<option value="${d.id_departement}">${d.nom_departement}</option>`;
                     listHtml += `
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            ${d.nom_departement}
-                            <button class="btn btn-sm btn-link text-danger btn-delete-dept" data-id="${d.id_departement}">
-                                <i class="fas fa-times"></i>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 py-3 border-bottom">
+                            <span class="fw-semibold text-dark"><i class="fas fa-building text-muted me-3"></i>${d.nom_departement}</span>
+                            <button class="btn btn-sm btn-light-danger btn-delete-dept p-2" data-id="${d.id_departement}" title="Supprimer">
+                                <i class="fas fa-times-circle fs-6"></i>
                             </button>
                         </li>
                     `;

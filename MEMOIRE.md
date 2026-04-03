@@ -18,6 +18,8 @@ Architecture : IoT (ESP32) + API PHP/MySQL + Interface Web (HTML/CSS/JS).
     - [x] Dashboard Public Live (Bootstrap/jQuery).
     - [x] **Interface Administration moderne** (`admin.php`) avec Sidebar.
     - [x] Formulaire de planification intelligente.
+    - [x] **Mise à jour visuelle** : Ajout de l'image de fond (`bg.jpg`) sur la page d'accueil (`index.php`).
+    - [x] **Sécurité** : Mise à jour des identifiants de l'administrateur par défaut (Nom : `ADMIN`, MDP : `ISPT2026`).
 - [ ] Simulation IoT (Code ESP32).
 
 ## Notes de contexte
