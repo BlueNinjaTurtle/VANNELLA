@@ -231,6 +231,156 @@
             color: var(--text-muted);
         }
 
+        /* Modal Schedule */
+        .modal-schedule {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-schedule.active {
+            display: flex;
+        }
+
+        .modal-content-schedule {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header-schedule {
+            background: linear-gradient(135deg, var(--ispt-primary), #003a7a);
+            color: white;
+            padding: 25px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title-schedule {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body-schedule {
+            padding: 25px;
+        }
+
+        .room-info-modal {
+            background: var(--ispt-secondary);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--ispt-primary);
+        }
+
+        .room-info-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 0.95rem;
+        }
+
+        .room-info-item i {
+            color: var(--ispt-primary);
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .schedule-title {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .creneau-item {
+            padding: 12px;
+            margin-bottom: 8px;
+            border-radius: 8px;
+            border-left: 4px solid #ccc;
+            transition: all 0.2s;
+        }
+
+        .creneau-libre {
+            background: #f0f9ff;
+            border-left-color: #28a745;
+            color: #155724;
+        }
+
+        .creneau-occupe {
+            background: #fff5f5;
+            border-left-color: #dc3545;
+            color: #721c24;
+        }
+
+        .creneau-pause {
+            background: #fffaed;
+            border-left-color: #ffc107;
+            color: #856404;
+            font-style: italic;
+            text-align: center;
+        }
+
+        .creneau-heure {
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: block;
+        }
+
+        .creneau-cours {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .creneau-status {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 6px;
+        }
+
+        .status-libre {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-occupe {
+            background: #dc3545;
+            color: white;
+        }
+
         .footer-home {
             background: var(--ispt-primary);
             color: white;
@@ -364,43 +514,6 @@
 
         </div>
 
-        <!-- Features Section -->
-        <div class="features-section">
-            <h2 class="features-title"><i class="fas fa-sparkles me-2" style="color: var(--ispt-accent);"></i>Fonctionnalités</h2>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-brain"></i></div>
-                    <div class="feature-name">Optimisation IA</div>
-                    <div class="feature-desc">Algorithme intelligent pour les attributions</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-calendar-check"></i></div>
-                    <div class="feature-name">Planning Flexible</div>
-                    <div class="feature-desc">Gestion hebdomadaire claire</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-sync-alt"></i></div>
-                    <div class="feature-name">Temps Réel</div>
-                    <div class="feature-desc">État des salles actualisé</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-chart-bar"></i></div>
-                    <div class="feature-name">Dashboard</div>
-                    <div class="feature-desc">Statistiques globales</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
-                    <div class="feature-name">Responsive</div>
-                    <div class="feature-desc">Tous les appareils</div>
-                </div>
-                <div class="feature-item">
-                    <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-                    <div class="feature-name">Sécurisé</div>
-                    <div class="feature-desc">Authentification</div>
-                </div>
-            </div>
-        </div>
-
         <!-- Live Salles -->
         <div id="salles-live" style="margin: 40px 0;">
             <h2 style="font-size: 1.8rem; font-weight: 700; margin-bottom: 30px; color: var(--text-dark);">
@@ -421,9 +534,91 @@
         <p>&copy; 2026 ISPT-Likasi - Module VANNELLA</p>
     </div>
 
+    <!-- Modal Schedule -->
+    <div class="modal-schedule" id="scheduleModal">
+        <div class="modal-content-schedule">
+            <div class="modal-header-schedule">
+                <div class="modal-title-schedule" id="modalTitle">Horaires</div>
+                <button class="modal-close" onclick="closeScheduleModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body-schedule">
+                <div class="room-info-modal">
+                    <div class="room-info-item">
+                        <i class="fas fa-door-open"></i>
+                        <strong id="modalRoomName">Nom</strong>
+                    </div>
+                    <div class="room-info-item">
+                        <i class="fas fa-map-pin"></i>
+                        <span id="modalRoomBuilding">Bâtiment</span>
+                    </div>
+                    <div class="room-info-item">
+                        <i class="fas fa-users"></i>
+                        <span id="modalRoomCapacity">Capacité</span>
+                    </div>
+                </div>
+
+                <div class="schedule-title">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>Emploi du temps - <span id="modalDay">Jour</span></span>
+                </div>
+
+                <div id="creneauxContainer">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="text-muted mt-2">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        function openScheduleModal(salleName, salleId, batiment, capacite) {
+            $.get('api/getSalleSchedule.php', {
+                id_salle: salleId,
+                jour: 'Lundi'
+            }, function(res) {
+                if (res.status === 'success') {
+                    const data = res.data;
+                    
+                    $('#modalTitle').text('Horaires - ' + salleName);
+                    $('#modalRoomName').text(salleName);
+                    $('#modalRoomBuilding').text(batiment);
+                    $('#modalRoomCapacity').text(capacite + ' places');
+                    $('#modalDay').text(data.jour);
+
+                    const creneauxHtml = data.creneaux.map(c => {
+                        if (c.est_pause) {
+                            return `<div class="creneau-item creneau-pause">
+                                <span class="creneau-heure">${c.heure}</span>
+                            </div>`;
+                        } else {
+                            const classe = c.occupe ? 'creneau-occupe' : 'creneau-libre';
+                            const status = c.occupe ? 'OCCUPÉE' : 'LIBRE';
+                            const statusClass = c.occupe ? 'status-occupe' : 'status-libre';
+                            
+                            return `<div class="creneau-item ${classe}">
+                                <span class="creneau-heure">${c.heure}</span>
+                                ${c.occupe ? `<div class="creneau-cours">${c.cours}</div>` : ''}
+                                <div class="creneau-status ${statusClass}">${status}</div>
+                            </div>`;
+                        }
+                    }).join('');
+
+                    $('#creneauxContainer').html(creneauxHtml);
+                    $('#scheduleModal').addClass('active');
+                }
+            });
+        }
+
+        function closeScheduleModal() {
+            $('#scheduleModal').removeClass('active');
+        }
+
         $(document).ready(function() {
             function loadStats() {
                 $.get('api/getSalles.php', function(res) {
@@ -451,7 +646,7 @@
                     const badgeClass = salle.etat === 'libre' ? 'success' : (salle.etat === 'occupée' ? 'danger' : 'warning');
                     const icon = salle.etat === 'libre' ? 'fa-door-open' : 'fa-door-closed';
                     
-                    return `<div class="card border-0 shadow-sm" style="border-top: 4px solid var(--ispt-primary);">
+                    return `<div class="card border-0 shadow-sm" style="border-top: 4px solid var(--ispt-primary); cursor: pointer;" onclick="openScheduleModal('${salle.nom_salle}', ${salle.id_salle}, '${salle.batiment}', ${salle.capacite})">
                         <div class="card-body">
                             <h5 class="card-title fw-bold">${salle.nom_salle}</h5>
                             <div class="d-flex align-items-center mb-3">
@@ -460,6 +655,9 @@
                             </div>
                             <small class="text-muted d-block mb-2"><i class="fas fa-map-pin me-1"></i> ${salle.batiment}</small>
                             <small class="text-muted d-block"><i class="fas fa-users me-1"></i> ${salle.capacite} places</small>
+                            <small style="color: #004a99; cursor: pointer; margin-top: 10px; display: block; font-weight: 600;">
+                                <i class="fas fa-eye me-1"></i> Voir les horaires
+                            </small>
                         </div>
                     </div>`;
                 }).join('');
@@ -469,6 +667,13 @@
             window.scrollToSalles = function() {
                 document.getElementById('salles-live').scrollIntoView({ behavior: 'smooth' });
             };
+
+            // Fermer la modal au clic en dehors
+            $('#scheduleModal').click(function(e) {
+                if (e.target === this) {
+                    closeScheduleModal();
+                }
+            });
 
             loadStats();
             setInterval(loadStats, 30000);
