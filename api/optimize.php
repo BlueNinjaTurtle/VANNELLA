@@ -35,25 +35,29 @@ try {
     $sqlSallesDispo = "
         SELECT * FROM salles 
         WHERE id_salle NOT IN (
-            SELECT id_salle FROM horaires 
-            WHERE jour = :jour 
+            SELECT DISTINCT id_salle FROM horaires 
+            WHERE jour = ? 
             AND (
-                (heure_debut <= :debut AND heure_fin > :debut) OR 
-                (heure_debut < :fin AND heure_fin >= :fin) OR
-                (:debut <= heure_debut AND :fin >= heure_fin)
+                (heure_debut <= ? AND heure_fin > ?) OR 
+                (heure_debut < ? AND heure_fin >= ?) OR
+                (? <= heure_debut AND ? >= heure_fin)
             )
         )
-        AND capacite >= :effectif
+        AND capacite >= ?
         ORDER BY capacite ASC 
         LIMIT 1
     ";
 
     $stmt = $pdo->prepare($sqlSallesDispo);
     $stmt->execute([
-        'jour' => $jour,
-        'debut' => $heure_debut,
-        'fin' => $heure_fin,
-        'effectif' => $effectif
+        $jour,
+        $heure_debut,
+        $heure_debut,
+        $heure_fin,
+        $heure_fin,
+        $heure_debut,
+        $heure_fin,
+        $effectif
     ]);
 
     $bestSalle = $stmt->fetch();

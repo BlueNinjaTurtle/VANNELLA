@@ -11,7 +11,7 @@ $(document).ready(function() {
 
     function init() {
         // Charger Cours
-        $.get('api/getCours.php', function(res) {
+        $.getJSON('api/getCours.php', function(res) {
             if(res.status === 'success') {
                 let html = '<option value="">Choisir un cours...</option>';
                 res.data.forEach(c => {
@@ -22,7 +22,7 @@ $(document).ready(function() {
         });
 
         // Charger Promotions
-        $.get('api/getPromotions.php', function(res) {
+        $.getJSON('api/getPromotions.php', function(res) {
             if(res.status === 'success') {
                 let html = '<option value="">Choisir une promotion...</option>';
                 res.data.forEach(p => {
@@ -50,7 +50,7 @@ $(document).ready(function() {
         const $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Calcul...');
 
-        $.get('api/optimize.php', {
+        $.getJSON('api/optimize.php', {
             id_promotion: promoId,
             jour: jour,
             heure_debut: debut,
