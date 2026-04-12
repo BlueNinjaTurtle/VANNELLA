@@ -381,6 +381,127 @@
             color: white;
         }
 
+        /* Modal Occupation Week */
+        .modal-occupation {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-occupation.active {
+            display: flex;
+        }
+
+        .modal-content-occupation {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .modal-header-occupation {
+            background: linear-gradient(135deg, var(--ispt-primary), #003a7a);
+            color: white;
+            padding: 25px;
+            border-radius: 16px 16px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-body-occupation {
+            padding: 25px;
+        }
+
+        .week-day-item {
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+        }
+
+        .week-day-item.libre {
+            background: #f0fdf4;
+            border-color: #86efac;
+        }
+
+        .week-day-item.occupee {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+
+        .day-header {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .day-header.libre {
+            color: #15803d;
+        }
+
+        .day-header.occupee {
+            color: #991b1b;
+        }
+
+        .day-status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .day-status-badge.libre {
+            background: #86efac;
+            color: #15803d;
+        }
+
+        .day-status-badge.occupee {
+            background: #fca5a5;
+            color: #991b1b;
+        }
+
+        .course-list {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .course-list-item {
+            padding: 8px;
+            margin: 5px 0;
+            background: rgba(0,74,153,0.05);
+            border-left: 3px solid var(--ispt-primary);
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .course-time {
+            font-weight: 600;
+            color: var(--ispt-primary);
+        }
+
+        .course-promo {
+            font-size: 0.85rem;
+            color: #718096;
+        }
+
         .footer-home {
             background: var(--ispt-primary);
             color: white;
@@ -574,6 +695,26 @@
         </div>
     </div>
 
+    <!-- Modal Week Occupation -->
+    <div class="modal-occupation" id="occupationModal">
+        <div class="modal-content-occupation">
+            <div class="modal-header-occupation">
+                <div class="modal-title-schedule" id="modalOccupationTitle">Occupation Hebdomadaire</div>
+                <button class="modal-close" onclick="closeOccupationModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body-occupation">
+                <div id="weekOccupationContainer">
+                    <div class="text-center py-4">
+                        <div class="spinner-border text-primary"></div>
+                        <p class="text-muted mt-2">Chargement...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
@@ -619,6 +760,55 @@
             $('#scheduleModal').removeClass('active');
         }
 
+        function openOccupationModal(salleName, salleId) {
+            $.get('api/getSalleWeekOccupation.php', {
+                id_salle: salleId
+            }, function(res) {
+                if (res.status === 'success') {
+                    const data = res.data;
+                    
+                    $('#modalOccupationTitle').text('Occupation - ' + salleName);
+
+                    const weekHtml = data.jours.map(jour => {
+                        const occ = data.occupation[jour];
+                        const isLibre = occ.libre;
+                        const dayClass = isLibre ? 'libre' : 'occupee';
+                        const statusText = isLibre ? 'LIBRE' : 'OCCUPÉE';
+                        const icon = isLibre ? 'fa-check-circle' : 'fa-times-circle';
+
+                        let coursesHtml = '';
+                        if (!isLibre) {
+                            coursesHtml = `<div class="course-list">
+                                ${occ.horaires.map(h => `
+                                    <div class="course-list-item">
+                                        <span class="course-time">${h.heure_debut} - ${h.heure_fin}</span>
+                                        <div>${h.nom_cours}</div>
+                                        <div class="course-promo">${h.nom_promotion}</div>
+                                    </div>
+                                `).join('')}
+                            </div>`;
+                        }
+
+                        return `<div class="week-day-item ${dayClass}">
+                            <div class="day-header ${dayClass}">
+                                <i class="fas ${icon}"></i>
+                                <span>${jour}</span>
+                                <span class="day-status-badge ${dayClass}">${statusText}</span>
+                            </div>
+                            ${coursesHtml}
+                        </div>`;
+                    }).join('');
+
+                    $('#weekOccupationContainer').html(weekHtml);
+                    $('#occupationModal').addClass('active');
+                }
+            });
+        }
+
+        function closeOccupationModal() {
+            $('#occupationModal').removeClass('active');
+        }
+
         $(document).ready(function() {
             function loadStats() {
                 $.get('api/getSalles.php', function(res) {
@@ -651,7 +841,7 @@
                             <h5 class="card-title fw-bold">${salle.nom_salle}</h5>
                             <div class="d-flex align-items-center mb-3">
                                 <i class="fas ${icon} me-2 text-secondary fs-5"></i>
-                                <span class="badge bg-${badgeClass}">${salle.etat}</span>
+                                <span class="badge bg-${badgeClass}" style="cursor: pointer;" onclick="event.stopPropagation(); openOccupationModal('${salle.nom_salle}', ${salle.id_salle})">${salle.etat}</span>
                             </div>
                             <small class="text-muted d-block mb-2"><i class="fas fa-map-pin me-1"></i> ${salle.batiment}</small>
                             <small class="text-muted d-block"><i class="fas fa-users me-1"></i> ${salle.capacite} places</small>
@@ -672,6 +862,20 @@
             $('#scheduleModal').click(function(e) {
                 if (e.target === this) {
                     closeScheduleModal();
+                }
+            });
+
+            $('#occupationModal').click(function(e) {
+                if (e.target === this) {
+                    closeOccupationModal();
+                }
+            });
+
+            // Écouter les changements de localStorage (depuis l'admin)
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'salles_updated') {
+                    console.log('Mise à jour des salles détectée');
+                    loadStats();
                 }
             });
 

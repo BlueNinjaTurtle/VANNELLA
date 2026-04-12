@@ -47,7 +47,7 @@
                     <input type="hidden" id="promo-id">
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-muted small">Nom de la Promotion</label>
-                        <input type="text" id="promo-nom" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: L1 Informatique">
+                        <input type="text" id="promo-nom" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: BAC4 Informatique">
                     </div>
                     <div class="row g-3">
                         <div class="col-md-6 mb-3">
@@ -63,11 +63,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-semibold text-muted small">Filière</label>
-                        <input type="text" id="promo-filiere" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: Réseaux & Télécoms">
+                        <input type="text" id="promo-filiere" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: Informatique">
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-semibold text-muted small">Niveau d'études</label>
-                        <input type="text" id="promo-niveau" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: Licence 2">
+                        <input type="text" id="promo-niveau" class="form-control border-0 bg-light py-2 px-3" required placeholder="Ex: BAC2">
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">

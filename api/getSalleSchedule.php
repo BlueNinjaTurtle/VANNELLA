@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once '../config/db.php';
 
 $id_salle = $_GET['id_salle'] ?? null;
-$jour = $_GET['jour'] ?? strtolower(strftime('%A', strtotime('Monday')));
+$jour = $_GET['jour'] ?? 'Lundi';
 
 if (!$id_salle) {
     echo json_encode(['status' => 'error', 'message' => 'Salle requise']);

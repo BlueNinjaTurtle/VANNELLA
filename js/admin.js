@@ -104,6 +104,12 @@ $(document).ready(function() {
             contentType: 'application/json',
             success: function(res) {
                 if(res.status === 'success') {
+                    // Signaler aux autres onglets/fenêtres que les salles ont changé
+                    localStorage.setItem('salles_updated', JSON.stringify({
+                        timestamp: new Date().getTime(),
+                        message: 'Nouvel horaire ajouté'
+                    }));
+                    
                     alert("Planning enregistré avec succès !");
                     location.reload();
                 } else {

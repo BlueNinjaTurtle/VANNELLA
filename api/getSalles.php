@@ -13,7 +13,12 @@ try {
     $sql = "
         SELECT 
             s.id_salle, s.nom_salle, s.capacite, s.batiment, 
-            es.etat, es.date_update,
+            CASE 
+                WHEN h.id_horaire IS NOT NULL THEN 'occupée'
+                WHEN es.etat IS NOT NULL THEN es.etat
+                ELSE 'libre'
+            END as etat,
+            es.date_update,
             c.nom_cours as cours_actuel,
             p.nom_promotion as promo_actuelle
         FROM salles s 

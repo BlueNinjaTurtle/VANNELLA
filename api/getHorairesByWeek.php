@@ -55,7 +55,7 @@ try {
         }
     }
 
-    // Récupérer toutes les salles disponibles et leur état
+    // Récupérer toutes les salles disponibles et leur état dynamique
     $stmtSalles = $pdo->query("
         SELECT s.*, 
                COALESCE(e.etat, 'libre') as etat
@@ -64,6 +64,21 @@ try {
         ORDER BY s.nom_salle
     ");
     $toutes_salles = $stmtSalles->fetchAll();
+    
+    // Ajouter l'info d'occupation basée sur les horaires
+    foreach ($toutes_salles as &$salle) {
+        // Vérifier si la salle a des horaires cette semaine
+        $stmtCheck = $pdo->prepare("
+            SELECT COUNT(*) as total FROM horaires 
+            WHERE id_salle = ?
+        ");
+        $stmtCheck->execute([$salle['id_salle']]);
+        $result = $stmtCheck->fetch();
+        
+        if ($result['total'] > 0) {
+            $salle['etat'] = 'réservée';
+        }
+    }
 
     echo json_encode([
         'status' => 'success',

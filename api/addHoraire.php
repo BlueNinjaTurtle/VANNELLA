@@ -17,6 +17,14 @@ try {
     $stmt = $pdo->prepare($sql);
     $stmt->execute($data);
     
+    // Mettre à jour l'état de la salle à "réservée" après ajout d'horaire
+    $stmtEtat = $pdo->prepare("
+        UPDATE etat_salles 
+        SET etat = 'réservée' 
+        WHERE id_salle = ?
+    ");
+    $stmtEtat->execute([$data['id_salle']]);
+    
     echo json_encode(['status' => 'success', 'message' => 'Horaire ajouté avec succès']);
 } catch (PDOException $e) {
     http_response_code(500);
