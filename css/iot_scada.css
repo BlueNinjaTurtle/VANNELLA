@@ -1,0 +1,727 @@
+/**
+ * css/iot_scada.css
+ * Design SCADA industriel professionnel pour supervision IoT
+ * Inspiré des systèmes de monitoring industriels modernes
+ */
+
+:root {
+    /* Couleurs SCADA */
+    --scada-bg-dark: #0f1419;
+    --scada-bg-card: #1a1f2e;
+    --scada-border: #2d3748;
+    --scada-text-primary: #e2e8f0;
+    --scada-text-secondary: #a0aec0;
+    --scada-accent: #00ff88;
+    
+    /* États */
+    --status-libre: #10b981;
+    --status-occupee: #ef4444;
+    --status-offline: #6b7280;
+    --status-online: #3b82f6;
+    
+    /* Animations */
+    --transition-speed: 300ms;
+    --transition-easing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    --bs-border-radius: 8px;
+}
+
+/* ============================================
+   CONTENEUR SCADA
+   ============================================ */
+
+.scada-container {
+    background: linear-gradient(135deg, var(--scada-bg-dark) 0%, #1e2139 100%);
+    color: var(--scada-text-primary);
+    padding: 20px;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+}
+
+/* ============================================
+   HEADER SCADA
+   ============================================ */
+
+.scada-header {
+    background: linear-gradient(90deg, #1a1f2e 0%, #2d3748 100%);
+    border: 2px solid var(--scada-accent);
+    border-radius: 12px;
+    padding: 25px;
+    margin-bottom: 20px;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.1);
+}
+
+.scada-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--scada-accent);
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+
+.scada-title i {
+    margin-right: 12px;
+    animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.scada-subtitle {
+    color: var(--scada-text-secondary);
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Stats display */
+.scada-stats {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+}
+
+.stat-box {
+    background: rgba(0, 255, 136, 0.05);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: 8px;
+    padding: 15px 20px;
+    text-align: center;
+    min-width: 100px;
+}
+
+.stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--scada-accent);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--scada-text-secondary);
+    margin-top: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ============================================
+   BARRE DE CONNEXION
+   ============================================ */
+
+.scada-connection-bar {
+    background: var(--scada-bg-card);
+    border: 1px solid var(--scada-border);
+    border-radius: 8px;
+    padding: 12px 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.connection-status {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--scada-text-secondary);
+}
+
+.pulse-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    animation: pulse-animation 2s infinite;
+}
+
+.pulse-dot.online {
+    background: var(--status-libre);
+    box-shadow: 0 0 10px var(--status-libre);
+}
+
+.pulse-dot.offline {
+    background: var(--status-offline);
+    box-shadow: 0 0 5px var(--status-offline);
+}
+
+@keyframes pulse-animation {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+.connection-stats {
+    color: var(--scada-text-secondary);
+    font-size: 0.8rem;
+}
+
+#last-update {
+    font-family: 'Lucida Console', monospace;
+    color: var(--scada-accent);
+    font-weight: 600;
+}
+
+/* ============================================
+   GRILLE SCADA
+   ============================================ */
+
+.scada-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .scada-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .scada-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+    }
+}
+
+@media (max-width: 576px) {
+    .scada-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Carte Salle SCADA */
+.scada-salle-card {
+    background: var(--scada-bg-card);
+    border: 2px solid var(--scada-border);
+    border-radius: 12px;
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all var(--transition-speed) var(--transition-easing);
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.scada-salle-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.scada-salle-card.updating {
+    border-color: var(--scada-accent);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.3);
+    animation: card-pulse 0.5s ease;
+}
+
+@keyframes card-pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+}
+
+/* État visual header */
+.scada-salle-header {
+    padding: 20px;
+    background: var(--scada-bg-card);
+    border-bottom: 2px solid var(--scada-border);
+}
+
+.salle-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--scada-text-primary);
+    margin: 0 0 10px 0;
+}
+
+.salle-id {
+    font-size: 0.75rem;
+    color: var(--scada-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* État principal (ÉNORME) */
+.scada-salle-state {
+    padding: 30px 20px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.state-icon {
+    font-size: 3.5rem;
+    transition: all var(--transition-speed) var(--transition-easing);
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+}
+
+.state-text {
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* États colorés */
+.scada-salle-card.libre .state-icon {
+    color: var(--status-libre);
+    text-shadow: 0 0 20px var(--status-libre);
+}
+
+.scada-salle-card.libre .state-text {
+    color: var(--status-libre);
+}
+
+.scada-salle-card.occupee .state-icon {
+    color: var(--status-occupee);
+    text-shadow: 0 0 20px var(--status-occupee);
+    animation: pulse-state 1s ease-in-out infinite;
+}
+
+.scada-salle-card.occupee .state-text {
+    color: var(--status-occupee);
+}
+
+.scada-salle-card.offline .state-icon {
+    color: var(--status-offline);
+    opacity: 0.6;
+}
+
+.scada-salle-card.offline .state-text {
+    color: var(--status-offline);
+}
+
+@keyframes pulse-state {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================
+   INDICATEURS ET INFOS
+   ============================================ */
+
+.scada-salle-info {
+    padding: 15px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid var(--scada-border);
+    font-size: 0.85rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 5px 0;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: var(--scada-text-secondary);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.info-value {
+    color: var(--scada-text-primary);
+    font-weight: 600;
+}
+
+.badge-source {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.badge-source.iot {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60a5fa;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.badge-source.admin {
+    background: rgba(239, 68, 68, 0.2);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.badge-source.planning {
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border: 1px solid rgba(34, 197, 94, 0.4);
+}
+
+/* ============================================
+   TIMELINE
+   ============================================ */
+
+.scada-timeline {
+    background: var(--scada-bg-card);
+    border: 2px solid var(--scada-border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.timeline-header {
+    background: linear-gradient(90deg, #1a1f2e 0%, #2d3748 100%);
+    border-bottom: 2px solid var(--scada-accent);
+    padding: 15px 20px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--scada-accent);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.timeline-container {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 15px;
+}
+
+.timeline-empty {
+    text-align: center;
+    color: var(--scada-text-secondary);
+    padding: 20px;
+    font-style: italic;
+}
+
+.timeline-event {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+    padding: 10px 12px;
+    background: rgba(0, 255, 136, 0.05);
+    border-left: 3px solid var(--scada-accent);
+    border-radius: 4px;
+    animation: slideInLeft 0.3s ease;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.timeline-event.occupee {
+    border-left-color: var(--status-occupee);
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.timeline-event.libre {
+    border-left-color: var(--status-libre);
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.timeline-time {
+    color: var(--scada-accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+    min-width: 70px;
+    font-family: 'Lucida Console', monospace;
+}
+
+.timeline-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--scada-text-primary);
+}
+
+.timeline-salle {
+    font-weight: 700;
+    color: var(--scada-text-primary);
+}
+
+/* ============================================
+   MODAL DÉTAILS
+   ============================================ */
+
+.scada-header-modal {
+    background: linear-gradient(90deg, #1a1f2e 0%, #2d3748 100%);
+    border-bottom: 2px solid var(--scada-accent);
+    color: var(--scada-accent);
+}
+
+.modal-content {
+    background: var(--scada-bg-dark);
+    border: 1px solid var(--scada-border);
+    color: var(--scada-text-primary);
+}
+
+.detail-group {
+    margin-bottom: 15px;
+}
+
+.detail-group label {
+    font-size: 0.8rem;
+    color: var(--scada-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.detail-value {
+    font-size: 1.1rem;
+    color: var(--scada-accent);
+    font-weight: 600;
+    padding: 10px 15px;
+    background: rgba(0, 255, 136, 0.05);
+    border-left: 3px solid var(--scada-accent);
+    border-radius: 4px;
+}
+
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-left: 3px solid var(--scada-accent);
+    padding: 10px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.history-time {
+    color: var(--scada-accent);
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.history-change {
+    color: var(--scada-text-primary);
+    margin-top: 3px;
+}
+
+/* ============================================
+   TOAST NOTIFICATIONS
+   ============================================ */
+
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.scada-toast {
+    background: var(--scada-bg-card);
+    border: 2px solid var(--scada-accent);
+    border-radius: 8px;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    min-width: 300px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    animation: slideInRight 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 255, 136, 0.2);
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(400px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.toast-icon {
+    font-size: 1.5rem;
+    min-width: 30px;
+}
+
+.toast-content {
+    flex: 1;
+}
+
+.toast-title {
+    font-weight: 700;
+    color: var(--scada-accent);
+    margin: 0 0 3px 0;
+}
+
+.toast-message {
+    font-size: 0.9rem;
+    color: var(--scada-text-secondary);
+    margin: 0;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: var(--scada-text-secondary);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.toast-close:hover {
+    color: var(--scada-text-primary);
+}
+
+/* ============================================
+   LOADING STATE
+   ============================================ */
+
+.scada-loading {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: var(--scada-text-secondary);
+}
+
+.scada-loading .spinner-border {
+    color: var(--scada-accent);
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 15px;
+}
+
+/* ============================================
+   SCROLLBAR CUSTOMIZATION
+   ============================================ */
+
+.timeline-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.timeline-container::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb {
+    background: var(--scada-accent);
+    border-radius: 3px;
+}
+
+.timeline-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 255, 136, 0.8);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .scada-container {
+        padding: 15px;
+    }
+
+    .scada-header {
+        padding: 15px;
+    }
+
+    .scada-title {
+        font-size: 1.5rem;
+    }
+
+    .scada-stats {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 15px;
+        justify-content: center;
+    }
+
+    .stat-box {
+        min-width: 80px;
+        padding: 10px 15px;
+    }
+
+    .stat-value {
+        font-size: 1.4rem;
+    }
+
+    .scada-connection-bar {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .toast-container {
+        left: 10px;
+        right: 10px;
+        top: 10px;
+    }
+
+    .scada-toast {
+        min-width: auto;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .scada-header {
+        flex-direction: column !important;
+    }
+
+    .scada-title {
+        font-size: 1.2rem;
+    }
+
+    .scada-salle-state {
+        padding: 20px 15px;
+    }
+
+    .state-icon {
+        font-size: 2.5rem;
+    }
+
+    .state-text {
+        font-size: 1.1rem;
+    }
+}
+
+/* ============================================
+   DARK MODE (already dark, but consistency)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .scada-container {
+        background: linear-gradient(135deg, var(--scada-bg-dark) 0%, #1e2139 100%);
+    }
+}

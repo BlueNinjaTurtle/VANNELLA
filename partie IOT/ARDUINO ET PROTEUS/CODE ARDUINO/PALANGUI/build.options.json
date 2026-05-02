@@ -1,0 +1,10 @@
+{
+  "additionalFiles": "",
+  "builtInLibrariesFolders": "C:\\Users\\Mk Sama\\AppData\\Local\\Arduino15\\libraries",
+  "compiler.optimization_flags": "",
+  "customBuildProperties": "",
+  "fqbn": "arduino:avr:uno",
+  "hardwareFolders": "C:\\Users\\Mk Sama\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.7,C:\\Users\\Mk Sama\\AppData\\Local\\Arduino15\\packages\\arduino\\hardware\\avr\\1.8.7",
+  "otherLibrariesFolders": "c:\\Users\\Mk Sama\\Documents\\Arduino\\libraries",
+  "sketchLocation": "C:\\Users\\Mk Sama\\Documents\\Arduino\\PALANGUI"
+}

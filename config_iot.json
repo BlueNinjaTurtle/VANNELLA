@@ -1,0 +1,19 @@
+{
+    "COM_PORT": "COM3",
+    "BAUDRATE": 9600,
+    "SERIAL_TIMEOUT": 1,
+    "API_BASE_URL": "http://localhost/VANNELLA/api/",
+    "API_ENDPOINT": "iot_update.php",
+    "API_TIMEOUT": 5,
+    "VALID_ROOMS": [
+        "GRANDE SALLE",
+        "CISCO",
+        "UPL",
+        "PALANGUI",
+        "ANCIENNE PREPARATOIRE"
+    ],
+    "LOG_FILE": "logs/iot_bridge.log",
+    "LOG_MAX_BYTES": 5242880,
+    "LOG_BACKUP_COUNT": 5,
+    "DEBUG_MODE": false
+}

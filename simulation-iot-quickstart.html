@@ -1,0 +1,252 @@
+<!-- QUICK START - Simulation IoT VANNELLA -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Access - Simulation IoT</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 900px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.2em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        
+        .link-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            cursor: pointer;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .link-card.primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .link-card.secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        
+        .link-card.tertiary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .link-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .link-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .link-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .status-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .status-title {
+            color: #333;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        
+        .status-icon {
+            font-size: 1.5em;
+            margin-right: 15px;
+            min-width: 30px;
+        }
+        
+        .status-text {
+            color: #333;
+            font-size: 0.95em;
+        }
+        
+        .footer {
+            text-align: center;
+            color: #999;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+        }
+        
+        .emoji {
+            font-size: 1.2em;
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎮 Simulation IoT - VANNELLA</h1>
+        <p class="subtitle">Accès rapide aux fonctionnalités</p>
+        
+        <!-- État du Système -->
+        <div class="status-section">
+            <div class="status-title">✅ Statut du Système</div>
+            <div class="status-item">
+                <div class="status-icon">🟢</div>
+                <div class="status-text"><strong>Base de Données:</strong> Colonne 'etat' créée et fonctionnelle</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">🟢</div>
+                <div class="status-text"><strong>API getSalles.php:</strong> Synchronisée avec table salles</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">🟢</div>
+                <div class="status-text"><strong>API update_etat_salle.php:</strong> Mise à jour des états en temps réel</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">🟢</div>
+                <div class="status-text"><strong>Pages:</strong> Affichage avec indicateurs couleur (🟢🔴🟡⚫)</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">🟢</div>
+                <div class="status-text"><strong>Persistance:</strong> Tous les changements enregistrés en BD</div>
+            </div>
+        </div>
+        
+        <!-- Liens Principaux -->
+        <div class="links-grid">
+            <!-- Simulation IoT -->
+            <a href="simulation-iot.php" class="link-card primary">
+                <div class="link-icon">🎮</div>
+                <div class="link-title">Simulation IoT</div>
+                <div class="link-desc">Contrôlez les états des salles</div>
+            </a>
+            
+            <!-- Consultation Salles -->
+            <a href="salles_view.php" class="link-card secondary">
+                <div class="link-icon">📋</div>
+                <div class="link-title">Consultation Salles</div>
+                <div class="link-desc">Voir les états en temps réel</div>
+            </a>
+            
+            <!-- Planning -->
+            <a href="planning_view.php" class="link-card tertiary">
+                <div class="link-icon">📅</div>
+                <div class="link-title">Planning</div>
+                <div class="link-desc">Horaires de la semaine</div>
+            </a>
+        </div>
+        
+        <!-- États Disponibles -->
+        <div class="status-section">
+            <div class="status-title">📊 États des Salles</div>
+            <div class="status-item">
+                <div class="status-icon"><span class="emoji">🟢</span></div>
+                <div class="status-text"><strong>LIBRE</strong> - Salle disponible</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon"><span class="emoji">🔴</span></div>
+                <div class="status-text"><strong>OCCUPEE</strong> - Salle occupée (simulation IoT)</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon"><span class="emoji">🟡</span></div>
+                <div class="status-text"><strong>RESERVEE</strong> - Horaire publié (planning)</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon"><span class="emoji">⚫</span></div>
+                <div class="status-text"><strong>INDISPONIBLE</strong> - Salle bloquée (admin)</div>
+            </div>
+        </div>
+        
+        <!-- Guide Rapide -->
+        <div class="status-section">
+            <div class="status-title">🚀 Guide Rapide</div>
+            <div class="status-item">
+                <div class="status-icon">1️⃣</div>
+                <div class="status-text">Allez sur <strong>Simulation IoT</strong></div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">2️⃣</div>
+                <div class="status-text">Cliquez sur les boutons pour changer l'état des salles</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">3️⃣</div>
+                <div class="status-text">Allez sur <strong>Consultation Salles</strong> pour voir les changements en temps réel</div>
+            </div>
+            <div class="status-item">
+                <div class="status-icon">4️⃣</div>
+                <div class="status-text">Les changements persistent après refresh (enregistrés en BD)</div>
+            </div>
+        </div>
+        
+        <!-- Vérification -->
+        <div class="status-section">
+            <div class="status-title">🧪 Tester l'Installation</div>
+            <p>Exécutez le test complet: <a href="test_simulation_iot.php" style="color: #667eea; text-decoration: underline; font-weight: 700;">test_simulation_iot.php</a></p>
+        </div>
+        
+        <div class="footer">
+            <p><strong>VANNELLA - Simulation IoT</strong></p>
+            <p>Plateforme académique de gestion intelligente des salles</p>
+            <p style="font-size: 0.85em; margin-top: 15px;">✅ Toutes les parties implémentées et testées</p>
+        </div>
+    </div>
+</body>
+</html>

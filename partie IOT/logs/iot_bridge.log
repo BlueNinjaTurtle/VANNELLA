@@ -1,0 +1,209 @@
+2026-04-23 16:39:59,970 - [INFO] - ============================================================
+2026-04-23 16:39:59,970 - [INFO] - 🚀 Bridge IoT VANNELLA démarré
+2026-04-23 16:39:59,971 - [INFO] - ============================================================
+2026-04-23 16:39:59,971 - [INFO] - Configuration:
+2026-04-23 16:39:59,972 - [INFO] -   - Salles mappées: ['GRANDE SALLE', 'CISCO', 'UPL', 'PALANGUI', 'ANCIENNE PREPARATOIRE']
+2026-04-23 16:39:59,972 - [INFO] -   - API: http://localhost/VANNELLA/api/iot_update.php
+2026-04-23 16:39:59,972 - [INFO] -   - Baudrate: 9600
+2026-04-23 16:39:59,998 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:00,000 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:05,016 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:05,017 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:10,034 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:10,035 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:15,052 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:15,052 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:20,072 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:20,072 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:25,092 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:25,092 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:30,108 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:30,109 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:35,125 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:35,125 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:40,144 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:40,145 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:45,162 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:45,162 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:50,182 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:50,182 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:40:55,201 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:40:55,201 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:00,223 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:00,224 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:05,240 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:05,240 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:10,257 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:10,257 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:15,305 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:15,317 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:20,398 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:20,432 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:25,477 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:25,477 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:30,504 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:30,504 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:35,522 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:35,522 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:40,559 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:40,561 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:45,578 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:45,578 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:50,600 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:50,600 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:41:55,617 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:41:55,618 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:00,662 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:00,669 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:05,692 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:05,692 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:10,709 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:10,710 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:15,731 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:15,731 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:20,754 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:20,755 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:25,781 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:25,784 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:30,816 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:30,817 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:35,832 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:35,833 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:42:40,853 - [WARNING] - ⚠ Arduino non détecté, tentative avec COM3
+2026-04-23 16:42:40,853 - [ERROR] - ✗ Erreur série: could not open port 'COM3': FileNotFoundError(2, 'Le fichier spécifié est introuvable.', None, 2)
+2026-04-23 16:43:32,525 - [INFO] - ============================================================
+2026-04-23 16:43:32,526 - [INFO] - 🚀 Bridge IoT VANNELLA démarré
+2026-04-23 16:43:32,526 - [INFO] - ============================================================
+2026-04-23 16:43:32,526 - [INFO] - Configuration:
+2026-04-23 16:43:32,527 - [INFO] -   - Salles mappées: ['GRANDE SALLE', 'CISCO', 'UPL', 'PALANGUI', 'ANCIENNE PREPARATOIRE']
+2026-04-23 16:43:32,527 - [INFO] -   - API: http://localhost/VANNELLA/api/iot_update.php
+2026-04-23 16:43:32,527 - [INFO] -   - Baudrate: 9600
+2026-04-23 16:43:32,549 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:43:37,567 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:43:42,581 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:43:47,599 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:43:52,619 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:43:57,636 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:02,655 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:07,673 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:12,689 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:17,703 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:22,719 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:27,736 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:32,753 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:37,774 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:42,789 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:47,808 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:52,833 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:44:57,856 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:02,874 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:07,915 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:12,952 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:17,968 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:22,988 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:28,009 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:33,025 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:38,051 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:43,069 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:48,085 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:53,126 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:45:58,180 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:03,202 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:08,226 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:13,250 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:18,325 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:23,401 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:28,427 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:33,444 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:38,461 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:43,478 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:48,500 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:53,523 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:46:58,624 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:03,700 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:08,722 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:13,737 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:18,760 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:23,776 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:28,794 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:33,815 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:38,831 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:43,848 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:48,884 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:53,928 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:47:58,946 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:03,975 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:09,002 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:14,017 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:19,034 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:24,049 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:29,064 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:34,078 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:39,094 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:44,108 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:49,126 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:54,146 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:48:59,163 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:04,181 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:09,200 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:14,221 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:19,237 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:24,252 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:29,270 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:34,286 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:39,301 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:44,317 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:49,331 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:54,345 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:49:59,363 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:04,381 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:09,397 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:14,439 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:19,473 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:24,556 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:29,600 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:34,622 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:39,639 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:44,657 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:49,672 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:54,691 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:50:59,708 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:04,724 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:09,739 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:14,757 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:19,776 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:24,792 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:29,808 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:34,828 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:39,850 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:44,865 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:49,884 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:54,902 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:51:59,917 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:04,937 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:09,953 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:14,968 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:19,989 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:25,004 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:30,026 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:35,049 - [WARNING] - ⚠ Aucun port série détecté. Vérifiez la connexion de l'Arduino.
+2026-04-23 16:52:40,083 - [WARNING] - ⚠ Arduino non détecté automatiquement, utilisation du port configuré COM3
+2026-04-23 16:52:43,495 - [INFO] - ✓ Port série ouvert: COM3
+2026-04-23 17:11:48,207 - [INFO] - ============================================================
+2026-04-23 17:11:48,207 - [INFO] - 🚀 Bridge IoT VANNELLA démarré
+2026-04-23 17:11:48,207 - [INFO] - ============================================================
+2026-04-23 17:11:48,208 - [INFO] - Configuration:
+2026-04-23 17:11:48,208 - [INFO] -   - Salles mappées: ['GRANDE SALLE', 'CISCO', 'UPL', 'PALANGUI', 'ANCIENNE PREPARATOIRE']
+2026-04-23 17:11:48,208 - [INFO] -   - API: http://localhost/VANNELLA/api/iot_update.php
+2026-04-23 17:11:48,209 - [INFO] -   - Baudrate: 9600
+2026-04-23 17:11:48,230 - [WARNING] - ⚠ Arduino non détecté automatiquement, utilisation du port configuré COM4
+2026-04-23 17:11:48,231 - [INFO] - ✓ Port série ouvert: COM4
+2026-04-23 17:19:48,684 - [INFO] - ============================================================
+2026-04-23 17:19:48,685 - [INFO] - 🚀 Bridge IoT VANNELLA démarré
+2026-04-23 17:19:48,685 - [INFO] - ============================================================
+2026-04-23 17:19:48,685 - [INFO] - Configuration:
+2026-04-23 17:19:48,686 - [INFO] -   - Salles mappées: ['GRANDE SALLE', 'CISCO', 'UPL', 'PALANGUI', 'ANCIENNE PREPARATOIRE']
+2026-04-23 17:19:48,686 - [INFO] -   - API: http://localhost/VANNELLA/api/iot_update.php
+2026-04-23 17:19:48,686 - [INFO] -   - Baudrate: 9600
+2026-04-23 17:19:48,708 - [WARNING] - ⚠ Arduino non détecté automatiquement, utilisation du port configuré COM4
+2026-04-23 17:19:48,709 - [INFO] - ✓ Port série ouvert: COM4
