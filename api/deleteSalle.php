@@ -1,6 +1,6 @@
 <?php
 // api/deleteSalle.php
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 require_once '../config/db.php';
 
 if (!isset($_POST['id_salle'])) {
@@ -10,20 +10,46 @@ if (!isset($_POST['id_salle'])) {
 
 try {
     $id_salle = (int)$_POST['id_salle'];
+
+    if ($id_salle <= 0) {
+        echo json_encode(['status' => 'error', 'message' => 'ID de salle invalide']);
+        exit();
+    }
+
     $pdo->beginTransaction();
 
-    // Supprimer l'état
-    $stmt1 = $pdo->prepare("DELETE FROM etat_salles WHERE id_salle = ?");
-    $stmt1->execute([$id_salle]);
+    $stmtCheck = $pdo->prepare("SELECT id_salle FROM salles WHERE id_salle = ?");
+    $stmtCheck->execute([$id_salle]);
+    if (!$stmtCheck->fetch()) {
+        throw new Exception('Salle introuvable ou deja supprimee');
+    }
 
-    // Supprimer la salle
-    $stmt2 = $pdo->prepare("DELETE FROM salles WHERE id_salle = ?");
-    $stmt2->execute([$id_salle]);
+    // Supprimer les tables enfants avant la salle pour respecter les contraintes FK.
+    $stmtHistory = $pdo->prepare("DELETE FROM etat_salles_history WHERE id_salle = ?");
+    $stmtHistory->execute([$id_salle]);
+
+    $stmtEtat = $pdo->prepare("DELETE FROM etat_salles WHERE id_salle = ?");
+    $stmtEtat->execute([$id_salle]);
+
+    $stmtHoraires = $pdo->prepare("DELETE FROM horaires WHERE id_salle = ?");
+    $stmtHoraires->execute([$id_salle]);
+
+    $stmtSalle = $pdo->prepare("DELETE FROM salles WHERE id_salle = ?");
+    $stmtSalle->execute([$id_salle]);
 
     $pdo->commit();
-    echo json_encode(['status' => 'success', 'message' => 'Salle supprimée avec succès']);
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Salle supprimee avec succes',
+        'horaires_supprimes' => $stmtHoraires->rowCount(),
+        'historiques_supprimes' => $stmtHistory->rowCount()
+    ]);
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
+
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }
 ?>

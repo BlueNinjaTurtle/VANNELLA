@@ -1,0 +1,40 @@
+@startuml
+start
+:Administrateur ouvre le module Planning;
+:Selectionner promotion, cours, jour et creneau;
+if (Champs complets ?) then (oui)
+  :Appeler api/optimize.php;
+  :Charger l'effectif de la promotion;
+  :Chercher une salle libre avec capacite suffisante;
+  if (Salle libre trouvee ?) then (oui)
+    :Retourner la salle optimale;
+  else (non)
+    :Analyser les conflits actifs du meme creneau;
+    if (Promotion "Toutes/Tous" ?) then (oui)
+      :Autoriser le remplacement des horaires actifs;
+    else (non)
+      if (Priorite niveau superieure ?\nBac4 > Bac3 > Bac2 > Bac1) then (oui)
+        :Autoriser le remplacement;
+      else (non)
+        :Refuser l'attribution;
+        stop
+      endif
+    endif
+  endif
+  :Afficher la salle retenue;
+  :Administrateur enregistre le planning;
+  :Appeler api/addHoraire.php;
+  if (Conflits remplacables ?) then (oui)
+    :Marquer les anciens horaires comme annules;
+    :Inserer le nouvel horaire actif;
+    :Mettre la salle en etat reservee;
+    :Ajouter une trace dans l'historique;
+    :Afficher succes;
+  else (non)
+    :Afficher erreur de conflit;
+  endif
+else (non)
+  :Afficher message de champs obligatoires;
+endif
+stop
+@enduml

@@ -427,7 +427,7 @@
             <i class="fas fa-spark"></i> Système D'Attribution Des Salles
         </div>
         <h1 class="hero-title">
-            ISPT-LIKASI
+            ISPT-LIKASI 2026
         </h1>
         <p class="hero-subtitle">
             Bienvenue Dans Le module D'attribution Optimale Des Salles

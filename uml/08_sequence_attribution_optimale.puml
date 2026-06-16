@@ -1,0 +1,39 @@
+@startuml
+actor "Administrateur" as Admin
+participant "Interface Planning\njs/admin.js" as UI
+participant "API Optimisation\napi/optimize.php" as Optimize
+participant "API Horaire\napi/addHoraire.php" as AddHoraire
+database "Base MySQL" as DB
+
+Admin -> UI : Selectionner cours, promotion,\njour et heures
+Admin -> UI : Cliquer "Attribution optimale"
+UI -> Optimize : GET id_promotion, jour,\nheure_debut, heure_fin
+Optimize -> DB : SELECT promotion + effectif
+Optimize -> DB : Chercher salles sans conflit actif
+alt Salle libre disponible
+  DB --> Optimize : Salle optimale
+else Aucune salle libre
+  Optimize -> DB : Charger conflits actifs
+  alt Promotion Toutes/Tous
+    Optimize -> Optimize : Autoriser remplacement
+  else Promotion specifique
+    Optimize -> Optimize : Comparer priorite\nBac4 > Bac3 > Bac2 > Bac1
+  end
+end
+Optimize --> UI : JSON salle retenue\nou erreur
+Admin -> UI : Enregistrer planning
+UI -> AddHoraire : POST nouvel horaire
+AddHoraire -> DB : Recharger promotion
+AddHoraire -> DB : Rechercher conflits actifs
+alt Conflits remplacables
+  AddHoraire -> DB : UPDATE horaires SET statut='annule'
+  AddHoraire -> DB : INSERT nouvel horaire
+  AddHoraire -> DB : UPDATE/INSERT etat_salles='reservee'
+  AddHoraire -> DB : INSERT etat_salles_history
+  DB --> AddHoraire : OK
+  AddHoraire --> UI : Succes + nombre d'annulations
+else Conflit non remplacable
+  AddHoraire --> UI : Erreur de priorite
+end
+UI --> Admin : Afficher resultat
+@enduml

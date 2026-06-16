@@ -1,0 +1,47 @@
+{
+    "api_base_url": "http://localhost/VANNELLA/api/",
+    "api_endpoint": "iot_rfid_update.php",
+    "api_timeout": 5,
+    "debug_mode": true,
+    "lecteurs_rfid": [
+        {
+            "id_lecteur": "LECTEUR_001",
+            "nom_salle": "GRANDE SALLE",
+            "id_salle": 1
+        },
+        {
+            "id_lecteur": "LECTEUR_002",
+            "nom_salle": "CISCO",
+            "id_salle": 2
+        },
+        {
+            "id_lecteur": "LECTEUR_003",
+            "nom_salle": "UPL",
+            "id_salle": 3
+        },
+        {
+            "id_lecteur": "LECTEUR_004",
+            "nom_salle": "PALANGUI",
+            "id_salle": 4
+        },
+        {
+            "id_lecteur": "LECTEUR_005",
+            "nom_salle": "ANCIENNE PREPARATOIRE",
+            "id_salle": 5
+        }
+    ],
+    "cartes_test": [
+        {
+            "id_carte": "CARD_001",
+            "proprietaire": "Étudiant 1"
+        },
+        {
+            "id_carte": "CARD_002",
+            "proprietaire": "Étudiant 2"
+        },
+        {
+            "id_carte": "CARD_003",
+            "proprietaire": "Professeur"
+        }
+    ]
+}

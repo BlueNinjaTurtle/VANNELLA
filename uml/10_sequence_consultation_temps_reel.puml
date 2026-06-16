@@ -1,0 +1,27 @@
+@startuml
+actor "Utilisateur" as User
+participant "Vue Salles\nsalles_view.php" as UI
+participant "JS\njs/salles_view.js" as JS
+participant "API Salles\ngetSallesWithDetails.php" as ApiSalles
+participant "API Horaires\ngetHorairesByWeek.php" as ApiHoraires
+participant "API Referentiels\ngetDepartments/getPromotions" as ApiRefs
+database "Base MySQL" as DB
+
+User -> UI : Ouvrir la consultation des salles
+UI -> JS : Initialiser loadData()
+loop Toutes les 2 secondes
+  JS -> ApiSalles : GET salles + etats + details
+  ApiSalles -> DB : SELECT salles, etat_salles,\nhoraires actifs courants
+  DB --> ApiSalles : Donnees salles
+  ApiSalles --> JS : JSON
+  JS -> ApiHoraires : GET horaires de la semaine
+  ApiHoraires -> DB : SELECT horaires + cours + promotions
+  DB --> ApiHoraires : Donnees horaires
+  ApiHoraires --> JS : JSON
+  JS -> ApiRefs : GET departements/promotions
+  ApiRefs -> DB : SELECT referentiels
+  DB --> ApiRefs : Donnees referentielles
+  ApiRefs --> JS : JSON
+  JS -> UI : Rafraichir cartes,\naccordeons et planning
+end
+@enduml

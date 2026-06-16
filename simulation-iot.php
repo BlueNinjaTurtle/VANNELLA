@@ -665,12 +665,6 @@ $emojis = [
                         <button class="btn-etat libre" onclick="changeEtat(${salle.id_salle}, 'libre', this, ${horaireAnnulationId || 'null'}, '${periodeAnnulation}')">
                             🟢 LIBRE
                         </button>
-                        <button class="btn-etat reservee" onclick="changeEtat(${salle.id_salle}, 'réservée', this)">
-                            🟡 RÉSERVÉE
-                        </button>
-                        <button class="btn-etat indisponible" onclick="changeEtat(${salle.id_salle}, 'indisponible', this)">
-                            ⚫ INDISPONIBLE
-                        </button>
                     </div>
                 </div>
             `;
