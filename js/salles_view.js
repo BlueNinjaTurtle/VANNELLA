@@ -48,6 +48,17 @@ $(document).ready(function() {
         return '';
     }
 
+    function formatDateCours(horaire) {
+        if (!horaire.date_cours) {
+            return '-';
+        }
+        return new Date(`${horaire.date_cours}T12:00:00`).toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        });
+    }
+
     loadData();
     setInterval(loadData, 2000);
 
@@ -420,6 +431,7 @@ $(document).ready(function() {
                 <strong style="display: block; margin-bottom: 10px;">Horaires semaine:</strong>
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
                     <tr style="background: #f0f0f0;">
+                        <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Date</th>
                         <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Jour</th>
                         <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Horaire</th>
                         <th style="padding: 8px; text-align: left; border: 1px solid #ddd;">Cours</th>
@@ -433,6 +445,7 @@ $(document).ready(function() {
 
                 modalBody += `
                     <tr>
+                        <td style="padding: 8px; border: 1px solid #ddd;">${formatDateCours(h)}</td>
                         <td style="padding: 8px; border: 1px solid #ddd;">${h.jour}</td>
                         <td style="padding: 8px; border: 1px solid #ddd;">${h.heure_debut} - ${h.heure_fin}</td>
                         <td style="padding: 8px; border: 1px solid #ddd;">${coursLabel}</td>
@@ -440,7 +453,7 @@ $(document).ready(function() {
                 `;
             });
         } else {
-            modalBody += '<tr><td colspan="3" style="padding: 8px; text-align: center; border: 1px solid #ddd;">Aucun horaire</td></tr>';
+            modalBody += '<tr><td colspan="4" style="padding: 8px; text-align: center; border: 1px solid #ddd;">Aucun horaire</td></tr>';
         }
 
         modalBody += '</table></div>';
