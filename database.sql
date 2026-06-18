@@ -29,10 +29,22 @@ CREATE TABLE IF NOT EXISTS promotions (
 );
 
 -- 4️⃣ Table cours
+CREATE TABLE IF NOT EXISTS professeurs (
+    id_professeur INT AUTO_INCREMENT PRIMARY KEY,
+    nom_professeur VARCHAR(100) NOT NULL UNIQUE,
+    uid_badge VARCHAR(100) NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS cours (
     id_cours INT AUTO_INCREMENT PRIMARY KEY,
     nom_cours VARCHAR(100) NOT NULL,
-    enseignant VARCHAR(100) NOT NULL
+    enseignant VARCHAR(100) NOT NULL,
+    id_professeur INT NULL,
+    id_departement INT NULL,
+    FOREIGN KEY (id_professeur) REFERENCES professeurs(id_professeur) ON DELETE SET NULL,
+    FOREIGN KEY (id_departement) REFERENCES departements(id_departement) ON DELETE SET NULL
 );
 
 -- 5️⃣ Table horaires
@@ -41,10 +53,11 @@ CREATE TABLE IF NOT EXISTS horaires (
     id_cours INT,
     id_promotion INT,
     jour VARCHAR(20) NOT NULL,
+    date_cours DATE NOT NULL,
     heure_debut TIME NOT NULL,
     heure_fin TIME NOT NULL,
     id_salle INT,
-    statut ENUM('actif', 'annule') DEFAULT 'actif',
+    statut ENUM('actif', 'en_cours', 'termine', 'annule') DEFAULT 'actif',
     type_cours ENUM('specifique', 'ensemble') DEFAULT 'specifique',
     FOREIGN KEY (id_cours) REFERENCES cours(id_cours),
     FOREIGN KEY (id_promotion) REFERENCES promotions(id_promotion),
@@ -106,9 +119,13 @@ INSERT INTO promotions (nom_promotion, filiere, niveau, effectif, id_departement
 ('L2 Informatique', 'Informatique', 'Licence 2', 40, 1),
 ('G3 Mines', 'Mines', 'Graduat 3', 85, 2);
 
-INSERT INTO cours (nom_cours, enseignant) VALUES 
-('Architecture des Ordinateurs', 'Prof. MUKADI'),
-('Base de Données', 'M. ILUNGA');
+INSERT INTO professeurs (nom_professeur, uid_badge) VALUES
+('Prof. MUKADI', NULL),
+('M. ILUNGA', NULL);
+
+INSERT INTO cours (nom_cours, enseignant, id_professeur) VALUES 
+('Architecture des Ordinateurs', 'Prof. MUKADI', 1),
+('Base de Données', 'M. ILUNGA', 2);
 
 -- Initialisation de l'état des salles
 INSERT INTO etat_salles (id_salle, etat) VALUES 

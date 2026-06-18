@@ -27,6 +27,7 @@
                 <tr>
                     <th class="border-0 py-3 ps-4 text-muted small text-uppercase fw-bold">Intitulé du Cours</th>
                     <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Enseignant</th>
+                    <th class="border-0 py-3 text-muted small text-uppercase fw-bold">UID RFID</th>
                     <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Département</th>
                     <th class="border-0 py-3 pe-4 text-muted small text-uppercase fw-bold text-end">Actions</th>
                 </tr>
@@ -61,6 +62,13 @@
                         <div class="input-group">
                             <span class="input-group-text border-0 bg-light"><i class="fas fa-chalkboard-teacher text-muted"></i></span>
                             <input type="text" id="cours-enseignant" class="form-control border-0 bg-light py-2" required placeholder="Ex: Prof. Kasongo">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold text-muted small">UID RFID</label>
+                        <div class="input-group">
+                            <span class="input-group-text border-0 bg-light"><i class="fas fa-id-card text-muted"></i></span>
+                            <input type="text" id="cours-uid-badge" class="form-control border-0 bg-light py-2" placeholder="Ex: 1002">
                         </div>
                     </div>
                     <div class="mb-0">

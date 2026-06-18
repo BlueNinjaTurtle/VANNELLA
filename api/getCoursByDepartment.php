@@ -24,6 +24,8 @@ try {
             c.id_cours,
             c.nom_cours,
             c.enseignant,
+            c.id_professeur,
+            p.uid_badge,
             c.id_departement";
     
     if ($include_departement) {
@@ -32,6 +34,7 @@ try {
     
     $sql .= "
         FROM cours c
+        LEFT JOIN professeurs p ON c.id_professeur = p.id_professeur
         LEFT JOIN departements d ON c.id_departement = d.id_departement
         WHERE c.id_departement = ? OR (c.id_departement IS NULL)
         ORDER BY 

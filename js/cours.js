@@ -37,9 +37,12 @@ $(document).ready(function() {
 
         let html = '';
         if(filtered.length === 0) {
-            html = '<tr><td colspan="4" class="text-center py-4 text-muted">Aucun cours trouvé</td></tr>';
+            html = '<tr><td colspan="5" class="text-center py-4 text-muted">Aucun cours trouvé</td></tr>';
         } else {
             filtered.forEach(c => {
+                const uidBadge = c.uid_badge ?
+                    `<span class="badge bg-primary-subtle text-primary rounded-pill small">${c.uid_badge}</span>` :
+                    '<span class="badge bg-light text-muted rounded-pill small">Non attribue</span>';
                 const deptBadge = c.nom_departement ? 
                     `<span class="badge bg-info-soft text-info rounded-pill small">${c.nom_departement}</span>` : 
                     '<span class="badge bg-light text-muted rounded-pill small">Non assigné</span>';
@@ -58,6 +61,9 @@ $(document).ready(function() {
                             <div class="fw-semibold text-muted small">
                                 <i class="fas fa-user-tie me-2"></i>${c.enseignant}
                             </div>
+                        </td>
+                        <td>
+                            ${uidBadge}
                         </td>
                         <td>
                             ${deptBadge}
@@ -92,10 +98,12 @@ $(document).ready(function() {
             $('#cours-id').val(c.id_cours);
             $('#cours-nom').val(c.nom_cours);
             $('#cours-enseignant').val(c.enseignant);
+            $('#cours-uid-badge').val(c.uid_badge || '');
             $('#cours-departement').val(c.id_departement || '');
         } else {
             $('#form-cours')[0].reset();
             $('#cours-id').val('');
+            $('#cours-uid-badge').val('');
         }
     });
 
@@ -108,6 +116,7 @@ $(document).ready(function() {
             id_cours: id,
             nom_cours: $('#cours-nom').val(),
             enseignant: $('#cours-enseignant').val(),
+            uid_badge: $('#cours-uid-badge').val(),
             id_departement: $('#cours-departement').val() || null
         };
 

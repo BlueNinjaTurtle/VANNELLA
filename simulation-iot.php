@@ -596,11 +596,15 @@ $emojis = [
                         horaireAnnulationId = coursDisplay.id_horaire;
                         periodeAnnulation = parseInt(coursDisplay.heure_debut.split(':')[0], 10) < 12 ? 'avant' : 'apres';
                         const statutCours = (coursDisplay.statut || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                        const statusBadge = statutCours === 'annule' || statutCours === 'annulee'
-                            ? ' <span style="color: #dc3545; font-weight: 600; font-size: 0.9rem;">Annulé</span>'
-                            : '';
-                        
-                        const courseLabel = courseEnCours ? '📚' : '⏭️';
+                        let statusBadge = '';
+                        if (statutCours === 'annule' || statutCours === 'annulee') {
+                            statusBadge = ' <span style="color: #dc3545; font-weight: 600; font-size: 0.9rem;">Annule</span>';
+                        } else if (statutCours === 'en_cours') {
+                            statusBadge = ' <span style="color: #0d6efd; font-weight: 600; font-size: 0.9rem;">En cours</span>';
+                        } else if (statutCours === 'termine') {
+                            statusBadge = ' <span style="color: #6c757d; font-weight: 600; font-size: 0.9rem;">Termine</span>';
+                        }
+                                                const courseLabel = courseEnCours ? '📚' : '⏭️';
                         courseContent = `
                             <div style="margin-top: 12px; padding: 10px; background: rgba(0,74,153,0.1); border-left: 3px solid #004a99; border-radius: 4px;">
                                 <div style="font-weight: 600; color: #004a99; margin-bottom: 4px;">${courseLabel} ${coursDisplay.nom_cours}${statusBadge}</div>

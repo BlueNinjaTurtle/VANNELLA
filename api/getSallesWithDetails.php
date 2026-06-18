@@ -7,6 +7,7 @@ require_once '../config/db.php';
 try {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     $jourActuel = $jours[date('w')];
+    $dateActuelle = date('Y-m-d');
     $heureActuelle = date('H:i:s');
 
     // Première requête: infos des salles + état actuel
@@ -46,9 +47,10 @@ try {
         LEFT JOIN etat_salles es ON s.id_salle = es.id_salle
         LEFT JOIN horaires h ON s.id_salle = h.id_salle
             AND h.jour = :jour
+            AND h.date_cours = :date_cours
             AND :heure_debut_actuelle >= h.heure_debut
             AND :heure_fin_actuelle < h.heure_fin
-            AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
+            AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours')
         LEFT JOIN cours c ON h.id_cours = c.id_cours
         LEFT JOIN promotions p ON h.id_promotion = p.id_promotion
         ORDER BY s.batiment, s.nom_salle
@@ -57,6 +59,7 @@ try {
     $stmt_salles = $pdo->prepare($sql_salles);
     $stmt_salles->execute([
         'jour' => $jourActuel,
+        'date_cours' => $dateActuelle,
         'heure_debut_actuelle' => $heureActuelle,
         'heure_fin_actuelle' => $heureActuelle
     ]);

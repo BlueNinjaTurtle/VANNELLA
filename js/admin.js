@@ -7,6 +7,25 @@ $(document).ready(function() {
     let selectedSalleId = null;
     let allPromotions = [];
     let allCours = [];
+    const joursSemaine = ['', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+
+    function todayIsoDate() {
+        const now = new Date();
+        const offset = now.getTimezoneOffset();
+        return new Date(now.getTime() - offset * 60000).toISOString().slice(0, 10);
+    }
+
+    function syncJourFromDate() {
+        const dateValue = $('#date-cours').val();
+        if (!dateValue) {
+            return;
+        }
+
+        const dayName = joursSemaine[new Date(`${dateValue}T12:00:00`).getDay()];
+        if (dayName) {
+            $('#select-jour').val(dayName);
+        }
+    }
 
     // Charger les cours et promotions au démarrage
     init();
@@ -39,6 +58,9 @@ $(document).ready(function() {
 
         // Charger les horaires existants
         loadHoraires();
+        $('#date-cours').val(todayIsoDate());
+        syncJourFromDate();
+        $('#date-cours').on('change', syncJourFromDate);
         
         $('#current-date').text(new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
     }
@@ -92,28 +114,34 @@ $(document).ready(function() {
                 res.data.forEach(h => {
                     const heureDebut = h.heure_debut.slice(0, 5);
                     const heureFin = h.heure_fin.slice(0, 5);
+                    const dateCours = h.date_cours || '';
                     const statut = h.statut || 'actif';
                     const typeCours = h.type_cours || 'specifique';
                     
                     let badgeStatut = '';
-                    if (statut === 'annulé' || statut === 'annule') {
-                        badgeStatut = '<span class="badge bg-danger">Annulé</span>';
+                    if (statut === 'annule') {
+                        badgeStatut = '<span class="badge bg-danger">Annule</span>';
+                    } else if (statut === 'en_cours') {
+                        badgeStatut = '<span class="badge bg-primary">En cours</span>';
+                    } else if (statut === 'termine') {
+                        badgeStatut = '<span class="badge bg-secondary">Termine</span>';
                     } else {
                         badgeStatut = '<span class="badge bg-success">Actif</span>';
                     }
-                    
-                    if (typeCours === 'ensemble') {
+                                        if (typeCours === 'ensemble') {
                         badgeStatut += ' <span class="badge bg-info">Ensemble</span>';
                     }
                     
-                    const btnStatut = (statut === 'annulé' || statut === 'annule')
-                        ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'actif')"><i class="fas fa-redo me-1"></i>Réactiver</button>`
-                        : `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'annule')"><i class="fas fa-ban me-1"></i>Annuler</button>`;
-                    
+                    const btnStatut = (statut === 'annule')
+                        ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'actif')"><i class="fas fa-redo me-1"></i>Reactiver</button>`
+                        : (statut === 'actif'
+                            ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'annule')"><i class="fas fa-ban me-1"></i>Annuler</button>`
+                            : '<button type="button" class="btn btn-light btn-sm me-1" disabled><i class="fas fa-lock me-1"></i>Verrouille</button>');
                     html += `
                         <tr>
                             <td class="ps-4">${h.nom_cours}</td>
                             <td>${h.nom_promotion}</td>
+                            <td>${dateCours}</td>
                             <td>${h.jour}</td>
                             <td>${heureDebut} - ${heureFin} ${badgeStatut}</td>
                             <td><span class="badge bg-light text-dark">${h.nom_salle}</span></td>
@@ -132,7 +160,7 @@ $(document).ready(function() {
             } else {
                 $('#table-horaires').html(`
                     <tr>
-                        <td colspan="6" class="text-center py-4 text-muted">
+                        <td colspan="7" class="text-center py-4 text-muted">
                             <i class="fas fa-inbox me-2"></i>Aucun horaire planifié
                         </td>
                     </tr>
@@ -237,11 +265,12 @@ $(document).ready(function() {
     // Algorithme d'optimisation
     $('#btn-optimize').on('click', function() {
         const promoId = $('#select-promotion').val();
+        const dateCours = $('#date-cours').val();
         const jour = $('#select-jour').val();
         const debut = $('#heure-debut').val();
         const fin = $('#heure-fin').val();
 
-        if(!promoId || !jour || !debut || !fin) {
+        if(!promoId || !dateCours || !jour || !debut || !fin) {
             alert("Veuillez remplir tous les champs avant de lancer l'optimisation.");
             return;
         }
@@ -251,6 +280,7 @@ $(document).ready(function() {
 
         $.getJSON('api/optimize.php', {
             id_promotion: promoId,
+            date_cours: dateCours,
             jour: jour,
             heure_debut: debut,
             heure_fin: fin
@@ -293,6 +323,7 @@ $(document).ready(function() {
         const data = {
             id_cours: $('#select-cours').val(),
             id_promotion: $('#select-promotion').val(),
+            date_cours: $('#date-cours').val(),
             jour: $('#select-jour').val(),
             heure_debut: $('#heure-debut').val(),
             heure_fin: $('#heure-fin').val(),

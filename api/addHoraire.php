@@ -28,6 +28,11 @@ if (!$data || !isset($data['id_cours'], $data['id_promotion'], $data['jour'], $d
 }
 
 try {
+    $date_cours = $data['date_cours'] ?? date('Y-m-d');
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_cours)) {
+        throw new Exception('Date de cours invalide');
+    }
+
     $pdo->beginTransaction();
 
     $promoStmt = $pdo->prepare("SELECT nom_promotion, filiere, niveau FROM promotions WHERE id_promotion = ?");
@@ -43,6 +48,7 @@ try {
         FROM horaires h
         JOIN promotions p ON h.id_promotion = p.id_promotion
         WHERE h.id_salle = ?
+          AND h.date_cours = ?
           AND h.jour = ?
           AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
           AND (
@@ -53,6 +59,7 @@ try {
     ");
     $conflictStmt->execute([
         $data['id_salle'],
+        $date_cours,
         $data['jour'],
         $data['heure_debut'],
         $data['heure_debut'],
@@ -89,14 +96,15 @@ try {
     }
     
     // Insérer l'horaire
-    $sql = "INSERT INTO horaires (id_cours, id_promotion, jour, heure_debut, heure_fin, id_salle, type_cours)
-            VALUES (:id_cours, :id_promotion, :jour, :heure_debut, :heure_fin, :id_salle, :type_cours)";
+    $sql = "INSERT INTO horaires (id_cours, id_promotion, jour, date_cours, heure_debut, heure_fin, id_salle, type_cours)
+            VALUES (:id_cours, :id_promotion, :jour, :date_cours, :heure_debut, :heure_fin, :id_salle, :type_cours)";
             
     $stmt = $pdo->prepare($sql);
     $stmt->execute([
         'id_cours' => $data['id_cours'],
         'id_promotion' => $data['id_promotion'],
         'jour' => $data['jour'],
+        'date_cours' => $date_cours,
         'heure_debut' => $data['heure_debut'],
         'heure_fin' => $data['heure_fin'],
         'id_salle' => $data['id_salle'],
@@ -132,7 +140,9 @@ try {
         'horaires_annules' => count($conflicts)
     ]);
 } catch (Exception $e) {
-    $pdo->rollBack();
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
 }

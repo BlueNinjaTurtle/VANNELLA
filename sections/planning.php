@@ -22,7 +22,11 @@
                             <option value="">Sélectionner une promotion...</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold small text-muted">Date</label>
+                        <input type="date" id="date-cours" class="form-control border-0 bg-light py-2" required>
+                    </div>
+                    <div class="col-md-3">
                         <label class="form-label fw-semibold small text-muted">Jour</label>
                         <select id="select-jour" class="form-select border-0 bg-light py-2" required>
                             <option value="Lundi">Lundi</option>
@@ -33,11 +37,11 @@
                             <option value="Samedi">Samedi</option>
                         </select>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-semibold small text-muted">Heure Début</label>
                         <input type="time" id="heure-debut" class="form-control border-0 bg-light py-2" required>
                     </div>
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         <label class="form-label fw-semibold small text-muted">Heure Fin</label>
                         <input type="time" id="heure-fin" class="form-control border-0 bg-light py-2" required>
                     </div>
@@ -110,6 +114,7 @@
                         <tr>
                             <th class="border-0 py-3 ps-4 text-muted small text-uppercase fw-bold">Cours</th>
                             <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Promotion</th>
+                            <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Date</th>
                             <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Jour</th>
                             <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Horaire</th>
                             <th class="border-0 py-3 text-muted small text-uppercase fw-bold">Salle</th>
@@ -118,7 +123,7 @@
                     </thead>
                     <tbody id="table-horaires">
                         <tr>
-                            <td colspan="6" class="text-center py-4 text-muted">
+                            <td colspan="7" class="text-center py-4 text-muted">
                                 <i class="fas fa-spinner fa-spin me-2"></i>Chargement...
                             </td>
                         </tr>

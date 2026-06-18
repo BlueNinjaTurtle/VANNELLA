@@ -6,8 +6,11 @@ try {
     $stmt = $pdo->query("
         SELECT 
             c.*,
+            p.uid_badge,
+            p.nom_professeur,
             d.nom_departement
         FROM cours c
+        LEFT JOIN professeurs p ON c.id_professeur = p.id_professeur
         LEFT JOIN departements d ON c.id_departement = d.id_departement
         ORDER BY c.nom_cours
     ");

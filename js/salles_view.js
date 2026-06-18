@@ -34,6 +34,20 @@ $(document).ready(function() {
         return ` <span style="color: #dc3545; font-weight: 600; margin-left: 6px; ${extraStyle}">Annulé</span>`;
     }
 
+    function renderHoraireStatusLabel(horaire, extraStyle = '') {
+        const statut = (horaire.statut || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        if (statut === 'annule' || statut === 'annulee') {
+            return renderAnnuleLabel(extraStyle);
+        }
+        if (statut === 'en_cours') {
+            return ` <span style="color: #0d6efd; font-weight: 600; margin-left: 6px; ${extraStyle}">En cours</span>`;
+        }
+        if (statut === 'termine') {
+            return ` <span style="color: #6c757d; font-weight: 600; margin-left: 6px; ${extraStyle}">Termine</span>`;
+        }
+        return '';
+    }
+
     loadData();
     setInterval(loadData, 2000);
 
@@ -178,9 +192,7 @@ $(document).ready(function() {
                 let coursDisplay = courseEnCours || courseProchain;
                 
                 if (coursDisplay) {
-                    const statusBadge = isHoraireAnnule(coursDisplay)
-                        ? renderAnnuleLabel()
-                        : '';
+                    const statusBadge = renderHoraireStatusLabel(coursDisplay);
                     
                     const courseLabel = courseEnCours ? '📚 ' : '⏭️ ';
                     courseContent = `
@@ -350,7 +362,7 @@ $(document).ready(function() {
                             // Avant-midi
                             if(dayData.avant[i]) {
                                 const h = dayData.avant[i];
-                                const statusBadge = isHoraireAnnule(h) ? renderAnnuleLabel('font-size: 1.05rem;') : '';
+                                const statusBadge = renderHoraireStatusLabel(h, 'font-size: 1.05rem;');
                                 row += `
                                     <td style="text-align: center; font-weight: 600;">${h.heure_debut} - ${h.heure_fin}</td>
                                     <td><strong>${h.nom_cours}</strong>${statusBadge} <em style="color: #666;">(${h.nom_salle})</em></td>
@@ -362,7 +374,7 @@ $(document).ready(function() {
                             // Après-midi
                             if(dayData.apres[i]) {
                                 const h = dayData.apres[i];
-                                const statusBadge = isHoraireAnnule(h) ? renderAnnuleLabel('font-size: 1.05rem;') : '';
+                                const statusBadge = renderHoraireStatusLabel(h, 'font-size: 1.05rem;');
                                 row += `
                                     <td style="text-align: center; font-weight: 600;">${h.heure_debut} - ${h.heure_fin}</td>
                                     <td><strong>${h.nom_cours}</strong>${statusBadge} <em style="color: #666;">(${h.nom_salle})</em></td>
@@ -475,9 +487,7 @@ $(document).ready(function() {
         const horairesRoom = allHoraires.filter(h => h.id_salle == salleId);
         if (horairesRoom.length > 0) {
             horairesRoom.forEach(h => {
-                const coursLabel = isHoraireAnnule(h)
-                    ? `${h.nom_cours}${renderAnnuleLabel()}`
-                    : h.nom_cours;
+                const coursLabel = `${h.nom_cours}${renderHoraireStatusLabel(h)}`;
 
                 modalBody += `
                     <tr>

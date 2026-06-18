@@ -24,6 +24,7 @@ function isPromotionEnsemble(array $promotion): bool {
 }
 
 $id_promotion = $_GET['id_promotion'] ?? null;
+$date_cours = $_GET['date_cours'] ?? date('Y-m-d');
 $jour = $_GET['jour'] ?? null;
 $heure_debut = $_GET['heure_debut'] ?? null;
 $heure_fin = $_GET['heure_fin'] ?? null;
@@ -31,6 +32,12 @@ $heure_fin = $_GET['heure_fin'] ?? null;
 if (!$id_promotion || !$jour || !$heure_debut || !$heure_fin) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants']);
+    exit;
+}
+
+if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_cours)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Date de cours invalide']);
     exit;
 }
 
@@ -56,7 +63,8 @@ try {
         WHERE s.capacite >= ?
         AND s.id_salle NOT IN (
                 SELECT DISTINCT h.id_salle FROM horaires h
-                WHERE h.jour = ?
+                WHERE h.date_cours = ?
+                AND h.jour = ?
                 AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
                 AND (
                     (h.heure_debut <= ? AND h.heure_fin > ?) OR
@@ -71,6 +79,7 @@ try {
     $stmt = $pdo->prepare($sqlSallesDispo);
     $stmt->execute([
         $effectif,
+        $date_cours,
         $jour,
         $heure_debut,
         $heure_debut,
@@ -97,6 +106,7 @@ try {
             FROM horaires h
             JOIN promotions p ON h.id_promotion = p.id_promotion
             WHERE h.id_salle = ?
+              AND h.date_cours = ?
               AND h.jour = ?
               AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
               AND (
@@ -110,6 +120,7 @@ try {
         foreach ($salles as $salle) {
             $stmtConflicts->execute([
                 $salle['id_salle'],
+                $date_cours,
                 $jour,
                 $heure_debut,
                 $heure_debut,
