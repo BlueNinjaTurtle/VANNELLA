@@ -292,14 +292,16 @@ $(document).ready(function() {
                                     <thead>
                                         <tr>
                                             <th rowspan="2" style="vertical-align: middle; text-align: center;">JOUR</th>
-                                            <th colspan="2" style="text-align: center; border-bottom: 2px solid #004a99;">AVANT - MIDI</th>
-                                            <th colspan="2" style="text-align: center; border-bottom: 2px solid #004a99;">APRÈS - MIDI</th>
+                                            <th colspan="3" style="text-align: center; border-bottom: 2px solid #004a99;">AVANT - MIDI</th>
+                                            <th colspan="3" style="text-align: center; border-bottom: 2px solid #004a99;">APRÈS - MIDI</th>
                                         </tr>
                                         <tr>
                                             <th style="text-align: center;">HEURE</th>
                                             <th>INTITULÉ DE L'U.E</th>
+                                            <th>SALLE</th>
                                             <th style="text-align: center;">HEURE</th>
                                             <th>INTITULÉ DE L'U.E</th>
+                                            <th>SALLE</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -325,10 +327,14 @@ $(document).ready(function() {
                                 const statusBadge = renderHoraireStatusLabel(h, 'font-size: 1.05rem;');
                                 row += `
                                     <td style="text-align: center; font-weight: 600;">${h.heure_debut} - ${h.heure_fin}</td>
-                                    <td><strong>${h.nom_cours}</strong>${statusBadge} <em style="color: #666;">(${h.nom_salle})</em></td>
+                                    <td>
+                                        <strong>${h.nom_cours}</strong>${statusBadge}
+                                        <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">${h.enseignant || 'N/A'}</div>
+                                    </td>
+                                    <td><em style="color: #666;">${h.nom_salle || '-'}</em></td>
                                 `;
                             } else {
-                                row += `<td colspan="2" style="background: #f9f9f9;"></td>`;
+                                row += `<td colspan="3" style="background: #f9f9f9;"></td>`;
                             }
 
                             // Après-midi
@@ -337,10 +343,14 @@ $(document).ready(function() {
                                 const statusBadge = renderHoraireStatusLabel(h, 'font-size: 1.05rem;');
                                 row += `
                                     <td style="text-align: center; font-weight: 600;">${h.heure_debut} - ${h.heure_fin}</td>
-                                    <td><strong>${h.nom_cours}</strong>${statusBadge} <em style="color: #666;">(${h.nom_salle})</em></td>
+                                    <td>
+                                        <strong>${h.nom_cours}</strong>${statusBadge}
+                                        <div style="font-size: 0.85rem; color: #666; margin-top: 4px;">${h.enseignant || 'N/A'}</div>
+                                    </td>
+                                    <td><em style="color: #666;">${h.nom_salle || '-'}</em></td>
                                 `;
                             } else {
-                                row += `<td colspan="2" style="background: #f9f9f9;"></td>`;
+                                row += `<td colspan="3" style="background: #f9f9f9;"></td>`;
                             }
 
                             html += `<tr>${row}</tr>`;
