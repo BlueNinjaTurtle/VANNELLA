@@ -123,8 +123,8 @@
         /* Grille Salles */
         .salles-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
             margin-bottom: 40px;
         }
 
@@ -145,13 +145,13 @@
         }
 
         .salle-card-header {
-            padding: 12px;
+            padding: 10px;
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
             border-bottom: 2px solid #e0e0e0;
         }
 
         .salle-name {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #004a99;
             margin-bottom: 3px;
@@ -163,14 +163,14 @@
         }
 
         .salle-card-body {
-            padding: 15px 12px;
+            padding: 10px;
             text-align: center;
         }
 
         /* État Emoji Énorme */
         .state-emoji {
-            font-size: 2.5rem;
-            margin: 8px 0;
+            font-size: 2rem;
+            margin: 6px 0;
             animation: pulse-state 2s infinite;
         }
 

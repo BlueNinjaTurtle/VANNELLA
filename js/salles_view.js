@@ -157,59 +157,10 @@ $(document).ready(function() {
         let badgeIoT = (salle.iot_status === 'online') ? 'badge-online' : 'badge-offline';
         let iotText = (salle.iot_status === 'online') ? '✓ En ligne' : '✗ Hors ligne';
 
-        // 🆕 Récupérer les horaires de cette salle
-        let horairesSalle = allHoraires.filter(h => h.id_salle == salle.id_salle);
-        
-        // Trouver le cours actuel (basé sur l'heure actuelle)
-        let courseContent = '';
-        if (horairesSalle.length > 0) {
-            const now = new Date();
-            const dayOfWeek = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
-            const jourAujourdhui = dayOfWeek[now.getDay()];
-            
-            // Horaires du jour (filtrer par jour actuel)
-            let horairesAujourd = horairesSalle
-                .filter(h => h.jour === jourAujourdhui && !isHoraireAnnule(h))
-                .sort((a, b) => (a.heure_debut || '').localeCompare(b.heure_debut || ''));
-            
-            if (horairesAujourd.length > 0) {
-                // Trouver le cours en cours ou le prochain
-                const currentTime = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);
-                
-                let courseEnCours = null;
-                let courseProchain = null;
-                
-                for (let h of horairesAujourd) {
-                    if (h.heure_debut <= currentTime && h.heure_fin >= currentTime) {
-                        courseEnCours = h;
-                        break;
-                    }
-                    if (!courseProchain && h.heure_debut > currentTime) {
-                        courseProchain = h;
-                    }
-                }
-                
-                let coursDisplay = courseEnCours || courseProchain;
-                
-                if (coursDisplay) {
-                    const statusBadge = renderHoraireStatusLabel(coursDisplay);
-                    
-                    const courseLabel = courseEnCours ? '📚 ' : '⏭️ ';
-                    courseContent = `
-                        <div style="margin-top: 12px; padding: 10px; background: rgba(255,255,255,0.2); border-radius: 6px; font-size: 0.85rem; line-height: 1.4;">
-                            <div style="font-weight: 600; color: white;">${courseLabel}${coursDisplay.nom_cours}${statusBadge}</div>
-                            <div style="color: rgba(255,255,255,0.9);">🕐 ${coursDisplay.heure_debut} - ${coursDisplay.heure_fin}</div>
-                        </div>
-                    `;
-                }
-            }
-        }
-
         return `
             <div class="salle-card" data-salle-id="${salle.id_salle}">
                 <div class="salle-card-header">
                     <div class="salle-name">
-                        <span style="font-size: 1.4em; margin-right: 8px;">${emoji}</span>
                         ${salle.nom_salle}
                     </div>
                 </div>
@@ -217,8 +168,6 @@ $(document).ready(function() {
                     <div class="state-emoji">${emoji}</div>
                     <div class="state-text">${etatUpper}</div>
                     
-                    ${courseContent}
-
                     <button class="btn-details" onclick="showDetails(${salle.id_salle})">
                         <i class="fas fa-info-circle me-1"></i>Voir détails
                     </button>
