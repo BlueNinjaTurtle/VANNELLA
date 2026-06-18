@@ -416,13 +416,6 @@ $(document).ready(function() {
                     <div style="font-size: 1.5rem; font-weight: 700;">${salle.capacite} places</div>
                 </div>
             </div>
-
-            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <strong>Source:</strong> ${salle.etat_source}<br>
-                <strong>Statut IoT:</strong> ${salle.iot_status === 'online' ? '✓ En ligne' : '✗ Hors ligne'}<br>
-                <strong>Dernière mise à jour:</strong> ${salle.seconds_since_update || 0}s ago
-            </div>
-
             <div style="margin-top: 20px;">
                 <strong style="display: block; margin-bottom: 10px;">Horaires semaine:</strong>
                 <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
