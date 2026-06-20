@@ -23,9 +23,63 @@ $(document).ready(function() {
         }
 
         const dayName = joursSemaine[new Date(`${dateValue}T12:00:00`).getDay()];
+        if (dayName === 'Dimanche') {
+            alert("Le dimanche n'est pas un jour de cours.");
+            $('#date-cours').val('');
+            $('#select-jour').val('Lundi');
+            return;
+        }
+
         if (dayName) {
             $('#select-jour').val(dayName);
         }
+    }
+
+    function timeToMinutes(value) {
+        if (!value || value.indexOf(':') === -1) {
+            return null;
+        }
+
+        const parts = value.split(':');
+        return parseInt(parts[0], 10) * 60 + parseInt(parts[1], 10);
+    }
+
+    function isValidCourseWindow(debut, fin) {
+        const start = timeToMinutes(debut);
+        const end = timeToMinutes(fin);
+
+        if (start === null || end === null || end <= start) {
+            return false;
+        }
+
+        return (
+            (start >= 8 * 60 && end <= 12 * 60 + 15) ||
+            (start >= 14 * 60 && end <= 18 * 60 + 15)
+        );
+    }
+
+    function isPastSlot(dateCours, debut) {
+        if (!dateCours || !debut) {
+            return false;
+        }
+
+        return new Date(`${dateCours}T${debut}:00`).getTime() <= new Date().getTime();
+    }
+
+    function validateCourseSlot(dateCours, debut, fin) {
+        if (dateCours && joursSemaine[new Date(`${dateCours}T12:00:00`).getDay()] === 'Dimanche') {
+            return "Horaire invalide: le dimanche n'est pas un jour de cours.";
+        }
+
+        if (!isValidCourseWindow(debut, fin)) {
+            return "Horaire invalide: utilisez 08:00-12:15 ou 14:00-18:15.";
+        }
+
+        if (isPastSlot(dateCours, debut)) {
+            return "Horaire invalide: ce creneau est deja depasse.";
+        }
+
+        return null;
     }
 
     function renderSuggestions(suggestions) {
@@ -294,6 +348,12 @@ $(document).ready(function() {
             return;
         }
 
+        const slotError = validateCourseSlot(dateCours, debut, fin);
+        if (slotError) {
+            alert(slotError);
+            return;
+        }
+
         const $btn = $(this);
         $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin me-1"></i> Calcul...');
 
@@ -333,9 +393,10 @@ $(document).ready(function() {
                     </div>
                 `);
             }
-        }).fail(function() {
+        }).fail(function(xhr) {
             $btn.prop('disabled', false).html('<i class="fas fa-magic me-1"></i> Attribution Optimale');
-            alert("Erreur lors de l'optimisation");
+            const res = xhr.responseJSON;
+            alert("Erreur: " + (res && res.message ? res.message : "Erreur lors de l'optimisation"));
         });
     });
 
@@ -378,6 +439,12 @@ $(document).ready(function() {
             id_salle: selectedSalleId,
             statut: selectedSallePending ? 'en_attente' : 'actif'
         };
+
+        const slotError = validateCourseSlot(data.date_cours, data.heure_debut, data.heure_fin);
+        if (slotError) {
+            alert(slotError);
+            return;
+        }
 
         $.ajax({
             url: 'api/addHoraire.php',

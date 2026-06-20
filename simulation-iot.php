@@ -572,7 +572,9 @@ $emojis = [
                 const jourAujourdhui = dayOfWeek[now.getDay()];
                 
                 // Horaires du jour
-                let horairesAujourd = horairesSalle.filter(h => h.jour === jourAujourdhui);
+                let horairesAujourd = jourAujourdhui === 'Dimanche'
+                    ? []
+                    : horairesSalle.filter(h => h.jour === jourAujourdhui);
                 
                 if (horairesAujourd.length > 0) {
                     const currentTime = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2);

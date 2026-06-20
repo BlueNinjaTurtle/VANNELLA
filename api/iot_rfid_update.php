@@ -126,6 +126,17 @@ try {
     $jour = currentJourName();
     $heure = date('H:i:s');
 
+    if ($jour === 'Dimanche') {
+        $pdo->rollBack();
+        jsonResponse(404, 'error', 'NO_COURSE_DAY', "Le dimanche n'est pas un jour de cours", [
+            'uid_badge' => $uidBadge,
+            'professeur' => $professeur['nom_professeur'],
+            'date_cours' => $dateCours,
+            'heure' => $heure
+        ]);
+        exit;
+    }
+
     $stmt = $pdo->prepare("
         SELECT
             h.id_horaire,

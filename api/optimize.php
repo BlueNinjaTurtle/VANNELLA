@@ -47,9 +47,46 @@ function timeFromMinutes(int $minutes): string {
     return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
 }
 
+function courseWindows(): array {
+    return [
+        ['start' => 8 * 60, 'end' => 12 * 60 + 15],
+        ['start' => 14 * 60, 'end' => 18 * 60 + 15],
+    ];
+}
+
+function slotFitsCourseWindowsByMinutes(int $startMinutes, int $endMinutes): bool {
+    if ($endMinutes <= $startMinutes) {
+        return false;
+    }
+
+    foreach (courseWindows() as $window) {
+        if ($startMinutes >= $window['start'] && $endMinutes <= $window['end']) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function slotFitsCourseWindows(string $heureDebut, string $heureFin): bool {
+    return slotFitsCourseWindowsByMinutes(minutesFromTime($heureDebut), minutesFromTime($heureFin));
+}
+
+function slotIsPast(string $dateCours, string $heureDebut): bool {
+    return strtotime($dateCours . ' ' . substr($heureDebut, 0, 5)) <= time();
+}
+
 function frenchDayName(DateTime $date): string {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     return $jours[(int)$date->format('w')];
+}
+
+function isCourseDay(string $dateCours, ?string $jour = null): bool {
+    $date = new DateTime($dateCours);
+    $dayFromDate = frenchDayName($date);
+    $dayValue = trim((string)$jour);
+
+    return $dayFromDate !== 'Dimanche' && strcasecmp($dayValue, 'Dimanche') !== 0;
 }
 
 function roomHasActiveConflict(PDO $pdo, int $idSalle, string $dateCours, string $jour, string $heureDebut, string $heureFin): bool {
@@ -92,16 +129,16 @@ function buildSlotSuggestions(PDO $pdo, array $salles, string $dateCours, string
     }
 
     $requestedStart = minutesFromTime($heureDebut);
-    $dayStart = 8 * 60;
-    $dayEnd = 17 * 60 + 30;
     $candidateStarts = array_unique([
         $requestedStart,
         8 * 60,
         9 * 60,
         10 * 60,
         11 * 60,
-        13 * 60,
-        14 * 60
+        14 * 60,
+        15 * 60,
+        16 * 60,
+        17 * 60
     ]);
     sort($candidateStarts);
 
@@ -115,14 +152,22 @@ function buildSlotSuggestions(PDO $pdo, array $salles, string $dateCours, string
         $candidateDateValue = $candidateDate->format('Y-m-d');
         $candidateJour = frenchDayName($candidateDate);
 
+        if ($candidateJour === 'Dimanche') {
+            continue;
+        }
+
         foreach ($candidateStarts as $startMinutes) {
             $endMinutes = $startMinutes + $duration;
-            if ($startMinutes < $dayStart || $endMinutes > $dayEnd) {
+            if (!slotFitsCourseWindowsByMinutes($startMinutes, $endMinutes)) {
                 continue;
             }
 
             $candidateDebut = timeFromMinutes($startMinutes);
             $candidateFin = timeFromMinutes($endMinutes);
+
+            if (slotIsPast($candidateDateValue, $candidateDebut)) {
+                continue;
+            }
 
             foreach ($salles as $salle) {
                 $idSalle = (int)$salle['id_salle'];
@@ -172,6 +217,24 @@ if (!$id_promotion || !$jour || !$heure_debut || !$heure_fin) {
 if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_cours)) {
     http_response_code(400);
     echo json_encode(['status' => 'error', 'message' => 'Date de cours invalide']);
+    exit;
+}
+
+if (!isCourseDay($date_cours, $jour)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => "Horaire invalide: le dimanche n'est pas un jour de cours"]);
+    exit;
+}
+
+if (!slotFitsCourseWindows($heure_debut, $heure_fin)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Horaire invalide: utilisez 08:00-12:15 ou 14:00-18:15']);
+    exit;
+}
+
+if (slotIsPast($date_cours, $heure_debut)) {
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Horaire invalide: ce creneau est deja depasse']);
     exit;
 }
 

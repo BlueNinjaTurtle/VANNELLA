@@ -17,6 +17,18 @@ try {
         throw new Exception('Date de cours invalide');
     }
 
+    if (!attributionIsCourseDay($date_cours, $data['jour'])) {
+        throw new Exception("Horaire invalide: le dimanche n'est pas un jour de cours.");
+    }
+
+    if (!attributionSlotFitsCourseWindows($data['heure_debut'], $data['heure_fin'])) {
+        throw new Exception("Horaire invalide: les cours doivent rester dans 08:00-12:15 ou 14:00-18:15.");
+    }
+
+    if (attributionSlotIsPast($date_cours, $data['heure_debut'])) {
+        throw new Exception("Horaire invalide: ce creneau est deja depasse.");
+    }
+
     $statutHoraire = (($data['statut'] ?? '') === 'en_attente') ? 'en_attente' : 'actif';
 
     $pdo->beginTransaction();

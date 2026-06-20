@@ -288,7 +288,7 @@ $(document).ready(function() {
                     });
 
                     // Jours de la semaine
-                    const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+                    const jours = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
                     
                     html += `
                                 <table class="horaires-promo-table">

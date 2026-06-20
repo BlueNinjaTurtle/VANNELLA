@@ -7,6 +7,9 @@ require_once '../config/db.php';
 try {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     $jourActuel = $jours[date('w')];
+    if ($jourActuel === 'Dimanche') {
+        $jourActuel = '__NO_COURSE_DAY__';
+    }
     $dateActuelle = date('Y-m-d');
     $heureActuelle = date('H:i:s');
 
@@ -77,6 +80,7 @@ try {
         JOIN promotions p ON h.id_promotion = p.id_promotion
         LEFT JOIN departements d ON p.id_departement = d.id_departement
         WHERE h.id_salle IS NOT NULL
+          AND h.jour <> 'Dimanche'
         ORDER BY h.id_salle, d.nom_departement, p.nom_promotion
     ";
 

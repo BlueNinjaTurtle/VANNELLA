@@ -34,6 +34,19 @@ try {
     }
 
     // Récupérer les horaires de la salle pour ce jour
+    if (strtolower($jour) === 'dimanche') {
+        echo json_encode([
+            'status' => 'success',
+            'data' => [
+                'salle' => $salle,
+                'jour' => 'Dimanche',
+                'creneaux' => []
+            ],
+            'message' => "Le dimanche n'est pas un jour de cours"
+        ]);
+        exit;
+    }
+
     $stmtHoraires = $pdo->prepare("
         SELECT h.*, c.nom_cours, p.nom_promotion
         FROM horaires h

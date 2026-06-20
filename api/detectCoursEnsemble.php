@@ -24,6 +24,7 @@ try {
         FROM horaires h
         JOIN promotions p ON h.id_promotion = p.id_promotion
         WHERE h.statut = 'actif'
+        AND h.jour <> 'Dimanche'
         AND p.niveau LIKE '%1%'
         GROUP BY h.id_cours, h.jour, h.heure_debut, h.heure_fin, h.id_salle, p.id_departement
     ";
@@ -72,6 +73,7 @@ try {
                 AND h.heure_fin = ?
                 AND h.id_salle = ?
                 AND h.statut = 'actif'
+                AND h.jour <> 'Dimanche'
                 AND h.id_promotion IN (
                     SELECT id_promotion FROM promotions WHERE id_departement = ? AND niveau LIKE '%1%'
                 )

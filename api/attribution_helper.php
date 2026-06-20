@@ -33,6 +33,55 @@ function attributionCanReplaceConflict(array $newPromotion, string $newTypeCours
     return attributionPromotionPriority($newPromotion) > attributionPromotionPriority($conflict);
 }
 
+function attributionMinutesFromTime(string $time): int {
+    [$hours, $minutes] = array_map('intval', explode(':', substr($time, 0, 5)));
+    return $hours * 60 + $minutes;
+}
+
+function attributionCourseWindows(): array {
+    return [
+        ['start' => 8 * 60, 'end' => 12 * 60 + 15],
+        ['start' => 14 * 60, 'end' => 18 * 60 + 15],
+    ];
+}
+
+function attributionSlotFitsCourseWindows(string $heureDebut, string $heureFin): bool {
+    $start = attributionMinutesFromTime($heureDebut);
+    $end = attributionMinutesFromTime($heureFin);
+
+    if ($end <= $start) {
+        return false;
+    }
+
+    foreach (attributionCourseWindows() as $window) {
+        if ($start >= $window['start'] && $end <= $window['end']) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function attributionSlotIsPast(string $dateCours, string $heureDebut): bool {
+    return strtotime($dateCours . ' ' . substr($heureDebut, 0, 5)) <= time();
+}
+
+function attributionFrenchDayName(string $dateCours): string {
+    $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    return $jours[(int)date('w', strtotime($dateCours))];
+}
+
+function attributionIsCourseDay(string $dateCours, ?string $jour = null): bool {
+    $dayFromDate = attributionFrenchDayName($dateCours);
+    $dayValue = trim((string)$jour);
+
+    if ($dayFromDate === 'Dimanche' || strcasecmp($dayValue, 'Dimanche') === 0) {
+        return false;
+    }
+
+    return true;
+}
+
 function attributionUpdateSalleEtat(PDO $pdo, int $idSalle, string $etat, string $modifiedBy, string $raison): void {
     $stmt = $pdo->prepare("SELECT etat FROM etat_salles WHERE id_salle = ?");
     $stmt->execute([$idSalle]);
@@ -117,6 +166,8 @@ function attributionReactivateWaitingForSalle(
         "h.statut = 'en_attente'",
         "h.date_cours >= CURDATE()",
         "TIMESTAMP(h.date_cours, h.heure_fin) > NOW()",
+        "h.jour <> 'Dimanche'",
+        "DAYOFWEEK(h.date_cours) <> 1",
         "p.effectif <= ?"
     ];
     $params = [(int)$salle['capacite']];

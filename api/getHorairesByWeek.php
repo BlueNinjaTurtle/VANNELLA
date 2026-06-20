@@ -42,9 +42,9 @@ try {
             JOIN promotions p ON h.id_promotion = p.id_promotion
             LEFT JOIN etat_salles es ON s.id_salle = es.id_salle
             WHERE h.id_promotion = ?
-            AND h.jour IN ('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche')
+            AND h.jour IN ('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')
             ORDER BY h.date_cours,
-                     FIELD(h.jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'),
+                     FIELD(h.jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'),
                      h.heure_debut
         ";
         $stmt = $pdo->prepare($sql);
@@ -80,9 +80,9 @@ try {
             JOIN salles s ON h.id_salle = s.id_salle
             JOIN promotions p ON h.id_promotion = p.id_promotion
             LEFT JOIN etat_salles es ON s.id_salle = es.id_salle
-            WHERE h.jour IN ('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche')
+            WHERE h.jour IN ('Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi')
             ORDER BY h.date_cours,
-                     FIELD(h.jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'),
+                     FIELD(h.jour, 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'),
                      h.heure_debut
         ";
         $stmt = $pdo->prepare($sql);

@@ -6,6 +6,9 @@ require_once '../config/db.php';
 try {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     $jourActuel = $jours[date('w')];
+    if ($jourActuel === 'Dimanche') {
+        $jourActuel = '__NO_COURSE_DAY__';
+    }
     $dateActuelle = date('Y-m-d');
     $heureActuelle = date('H:i:s');
 
