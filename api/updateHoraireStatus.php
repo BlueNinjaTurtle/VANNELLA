@@ -15,10 +15,10 @@ $id_horaire = (int)$data['id_horaire'];
 $statut = strtolower(trim((string)$data['statut']));
 $statut = str_replace(['é', 'è', 'ê', 'ë'], 'e', $statut);
 
-$statuts_valides = ['actif', 'annule'];
+$statuts_valides = ['actif', 'annule', 'termine'];
 if (!in_array($statut, $statuts_valides, true)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Statut invalide. Doit etre "actif" ou "annule"']);
+    echo json_encode(['status' => 'error', 'message' => 'Statut invalide. Doit etre "actif", "annule" ou "termine"']);
     exit;
 }
 
@@ -44,11 +44,17 @@ try {
     $ancien_statut = $horaire['ancien_statut'];
     $reattribution = null;
     $salleLiberee = false;
+    $now = time();
+    $horaireStart = strtotime($horaire['date_cours'] . ' ' . substr($horaire['heure_debut'], 0, 5));
+    $horaireEnd = strtotime($horaire['date_cours'] . ' ' . substr($horaire['heure_fin'], 0, 5));
+    $horaireEstActuel = $horaireStart !== false && $horaireEnd !== false && $horaireStart <= $now && $now < $horaireEnd;
+    $doitVerifierLiberation = $statut === 'annule'
+        || ($statut === 'termine' && ($ancien_statut === 'en_cours' || $horaireEstActuel));
 
     $updateStmt = $pdo->prepare("UPDATE horaires SET statut = ? WHERE id_horaire = ?");
     $updateStmt->execute([$statut, $id_horaire]);
 
-    if ($statut === 'annule') {
+    if ($doitVerifierLiberation) {
         $checkStmt = $pdo->prepare("
             SELECT COUNT(*) AS total
             FROM horaires
@@ -77,7 +83,10 @@ try {
         ]);
 
         if ((int)$checkStmt->fetchColumn() === 0) {
-            attributionUpdateSalleEtat($pdo, $id_salle, 'libre', 'Admin', 'Cours annule');
+            $raison = $statut === 'termine'
+                ? 'Cours termine manuellement par Admin'
+                : 'Cours annule';
+            attributionUpdateSalleEtat($pdo, $id_salle, 'libre', 'Admin', $raison);
             $salleLiberee = true;
         }
 

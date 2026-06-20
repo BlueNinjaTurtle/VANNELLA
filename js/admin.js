@@ -211,11 +211,17 @@ $(document).ready(function() {
                         badgeStatut += ' <span class="badge bg-info">Ensemble</span>';
                     }
 
-                    const btnStatut = (statut === 'annule')
-                        ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'actif')"><i class="fas fa-redo me-1"></i>Reactiver</button>`
-                        : (statut === 'actif'
-                            ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'annule')"><i class="fas fa-ban me-1"></i>Annuler</button>`
-                            : '<button type="button" class="btn btn-light btn-sm me-1" disabled><i class="fas fa-lock me-1"></i>Verrouille</button>');
+                    let btnStatut = '';
+                    if (statut === 'annule') {
+                        btnStatut = `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'actif')"><i class="fas fa-redo me-1"></i>Reactiver</button>`;
+                    } else if (statut === 'actif' || statut === 'en_cours') {
+                        btnStatut = `
+                            <button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'annule')"><i class="fas fa-ban me-1"></i>Annuler</button>
+                            <button type="button" class="btn btn-secondary btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'termine')"><i class="fas fa-check me-1"></i>Terminer</button>
+                        `;
+                    } else {
+                        btnStatut = '<button type="button" class="btn btn-light btn-sm me-1" disabled><i class="fas fa-lock me-1"></i>Verrouille</button>';
+                    }
 
                     html += `
                         <tr>
@@ -278,7 +284,12 @@ $(document).ready(function() {
     };
 
     window.updateHoraireStatus = function(idHoraire, nouveauStatut) {
-        const action = nouveauStatut === 'annule' ? 'annuler' : 'reactiver';
+        const actions = {
+            annule: 'annuler',
+            actif: 'reactiver',
+            termine: 'terminer'
+        };
+        const action = actions[nouveauStatut] || 'modifier';
         if (!confirm(`Etes-vous sur de vouloir ${action} cet horaire ?`)) {
             return;
         }
@@ -293,7 +304,12 @@ $(document).ready(function() {
             contentType: 'application/json',
             success: function(res) {
                 if (res.status === 'success') {
-                    alert(`Horaire ${nouveauStatut === 'annule' ? 'annule' : 'reactive'} avec succes !`);
+                    const labels = {
+                        annule: 'annule',
+                        actif: 'reactive',
+                        termine: 'termine'
+                    };
+                    alert(`Horaire ${labels[nouveauStatut] || 'modifie'} avec succes !`);
                     loadHoraires();
                     localStorage.setItem('salles_updated', JSON.stringify({
                         timestamp: new Date().getTime(),

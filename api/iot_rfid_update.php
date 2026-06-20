@@ -6,6 +6,7 @@
 
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/attribution_helper.php';
 
 function currentJourName(): string {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
@@ -141,6 +142,8 @@ try {
         SELECT
             h.id_horaire,
             h.id_salle,
+            h.date_cours,
+            h.jour,
             h.statut,
             h.heure_debut,
             h.heure_fin,
@@ -156,7 +159,7 @@ try {
           AND h.jour = ?
           AND ? >= h.heure_debut
           AND ? < h.heure_fin
-          AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours')
+          AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours', 'en_attente')
         ORDER BY h.heure_debut
         LIMIT 1
     ");
@@ -195,6 +198,17 @@ try {
         setSalleEtat($pdo, (int)$salle['id_salle'], 'occupee', 'Double badgeage RFID ignore');
         $pdo->commit();
         jsonResponse(200, 'success', 'ALREADY_VALIDATED', 'Cours deja valide', [
+            'id_horaire' => (int)$horaire['id_horaire'],
+            'professeur' => $professeur['nom_professeur'],
+            'cours' => $horaire['nom_cours'],
+            'salle' => $salle['nom_salle']
+        ]);
+        exit;
+    }
+
+    if ($horaire['statut'] === 'en_attente' && attributionHasActiveConflict($pdo, (int)$salle['id_salle'], $horaire)) {
+        $pdo->rollBack();
+        jsonResponse(409, 'error', 'WAITING_CONFLICT', "Ce cours est encore en attente: la salle a toujours un conflit actif", [
             'id_horaire' => (int)$horaire['id_horaire'],
             'professeur' => $professeur['nom_professeur'],
             'cours' => $horaire['nom_cours'],

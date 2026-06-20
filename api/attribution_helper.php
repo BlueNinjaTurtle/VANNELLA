@@ -66,6 +66,14 @@ function attributionSlotIsPast(string $dateCours, string $heureDebut): bool {
     return strtotime($dateCours . ' ' . substr($heureDebut, 0, 5)) <= time();
 }
 
+function attributionSlotIsCurrent(string $dateCours, string $heureDebut, string $heureFin): bool {
+    $now = time();
+    $start = strtotime($dateCours . ' ' . substr($heureDebut, 0, 5));
+    $end = strtotime($dateCours . ' ' . substr($heureFin, 0, 5));
+
+    return $start !== false && $end !== false && $start <= $now && $now < $end;
+}
+
 function attributionFrenchDayName(string $dateCours): string {
     $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
     return $jours[(int)date('w', strtotime($dateCours))];
@@ -82,7 +90,32 @@ function attributionIsCourseDay(string $dateCours, ?string $jour = null): bool {
     return true;
 }
 
+function attributionNormalizeEtat(string $etat): string {
+    $etat = trim($etat);
+    $ascii = @iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $etat);
+    if ($ascii !== false && $ascii !== '') {
+        $etat = strtolower($ascii);
+    } else {
+        $etat = strtolower($etat);
+    }
+    $etat = preg_replace('/[^a-z]/', '', $etat);
+
+    if (strpos($etat, 'occup') === 0) {
+        return 'occupee';
+    }
+    if (strpos($etat, 'serv') !== false) {
+        return 'reservee';
+    }
+    if ($etat === 'indisponible') {
+        return 'indisponible';
+    }
+
+    return 'libre';
+}
+
 function attributionUpdateSalleEtat(PDO $pdo, int $idSalle, string $etat, string $modifiedBy, string $raison): void {
+    $etat = attributionNormalizeEtat($etat);
+
     $stmt = $pdo->prepare("SELECT etat FROM etat_salles WHERE id_salle = ?");
     $stmt->execute([$idSalle]);
     $current = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -237,16 +270,29 @@ function attributionReactivateWaitingForSalle(
             continue;
         }
 
-        $stmt = $pdo->prepare("UPDATE horaires SET id_salle = ?, statut = 'actif' WHERE id_horaire = ?");
+        $stmt = $pdo->prepare("
+            UPDATE horaires
+            SET id_salle = ?, statut = 'actif'
+            WHERE id_horaire = ? AND statut = 'en_attente'
+        ");
         $stmt->execute([$idSalle, $candidate['id_horaire']]);
 
-        attributionUpdateSalleEtat(
-            $pdo,
-            $idSalle,
-            'réservée',
-            $modifiedBy,
-            "Réattribution automatique de l'horaire en attente #{$candidate['id_horaire']}"
-        );
+        if ($stmt->rowCount() === 0) {
+            continue;
+        }
+
+        $candidate['id_salle'] = $idSalle;
+        $candidate['statut'] = 'actif';
+
+        if (attributionSlotIsCurrent($candidate['date_cours'], $candidate['heure_debut'], $candidate['heure_fin'])) {
+            attributionUpdateSalleEtat(
+                $pdo,
+                $idSalle,
+                'reservee',
+                $modifiedBy,
+                "Reattribution automatique de l'horaire en attente #{$candidate['id_horaire']}"
+            );
+        }
 
         return $candidate;
     }

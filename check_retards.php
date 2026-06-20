@@ -2,7 +2,7 @@
 /**
  * Script de maintenance des horaires RFID.
  *
- * - statut actif depasse de plus de 15 minutes => annule + salle libre
+ * - statut actif/en_attente sans badge trop tard ou fini => annule + salle libre
  * - statut en_cours depasse heure_fin => termine + salle libre
  */
 
@@ -106,9 +106,15 @@ try {
     $lateStmt = $pdo->prepare("
         SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
         FROM horaires
-        WHERE statut = 'actif'
+        WHERE statut IN ('actif', 'en_attente')
           AND date_cours >= ?
-          AND TIMESTAMP(date_cours, heure_debut) < DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+          AND (
+              (
+                  TIMESTAMP(date_cours, heure_debut) < DATE_SUB(NOW(), INTERVAL 15 MINUTE)
+                  AND TIMESTAMP(date_cours, heure_fin) > NOW()
+              )
+              OR TIMESTAMP(date_cours, heure_fin) <= NOW()
+          )
     ");
     $lateStmt->execute([$weekStart]);
     $lateHoraires = $lateStmt->fetchAll(PDO::FETCH_ASSOC);
