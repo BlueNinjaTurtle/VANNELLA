@@ -18,6 +18,21 @@ function attributionIsPromotionEnsemble(array $promotion): bool {
     return strpos($label, 'toutes') !== false || strpos($label, 'tous') !== false;
 }
 
+function attributionCanReplaceConflict(array $newPromotion, string $newTypeCours, array $conflict): bool {
+    $newIsEnsemble = $newTypeCours === 'ensemble';
+    $conflictIsEnsemble = ($conflict['type_cours'] ?? 'specifique') === 'ensemble';
+
+    if ($newIsEnsemble && !$conflictIsEnsemble) {
+        return true;
+    }
+
+    if (!$newIsEnsemble && $conflictIsEnsemble) {
+        return false;
+    }
+
+    return attributionPromotionPriority($newPromotion) > attributionPromotionPriority($conflict);
+}
+
 function attributionUpdateSalleEtat(PDO $pdo, int $idSalle, string $etat, string $modifiedBy, string $raison): void {
     $stmt = $pdo->prepare("SELECT etat FROM etat_salles WHERE id_salle = ?");
     $stmt->execute([$idSalle]);
@@ -99,13 +114,12 @@ function attributionReactivateWaitingForSalle(
     }
 
     $where = [
-        "h.id_salle = ?",
         "h.statut = 'en_attente'",
         "h.date_cours >= CURDATE()",
         "TIMESTAMP(h.date_cours, h.heure_fin) > NOW()",
         "p.effectif <= ?"
     ];
-    $params = [$idSalle, (int)$salle['capacite']];
+    $params = [(int)$salle['capacite']];
 
     if ($dateCours !== null) {
         $where[] = "h.date_cours = ?";
@@ -132,6 +146,7 @@ function attributionReactivateWaitingForSalle(
             h.jour,
             h.heure_debut,
             h.heure_fin,
+            h.type_cours,
             p.nom_promotion,
             p.filiere,
             p.niveau,
@@ -148,7 +163,7 @@ function attributionReactivateWaitingForSalle(
     }
 
     usort($candidates, function (array $a, array $b): int {
-        $ensembleCompare = (int)attributionIsPromotionEnsemble($b) <=> (int)attributionIsPromotionEnsemble($a);
+        $ensembleCompare = (int)(($b['type_cours'] ?? 'specifique') === 'ensemble') <=> (int)(($a['type_cours'] ?? 'specifique') === 'ensemble');
         if ($ensembleCompare !== 0) {
             return $ensembleCompare;
         }
@@ -171,8 +186,8 @@ function attributionReactivateWaitingForSalle(
             continue;
         }
 
-        $stmt = $pdo->prepare("UPDATE horaires SET statut = 'actif' WHERE id_horaire = ?");
-        $stmt->execute([$candidate['id_horaire']]);
+        $stmt = $pdo->prepare("UPDATE horaires SET id_salle = ?, statut = 'actif' WHERE id_horaire = ?");
+        $stmt->execute([$idSalle, $candidate['id_horaire']]);
 
         attributionUpdateSalleEtat(
             $pdo,

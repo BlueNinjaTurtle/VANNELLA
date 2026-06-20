@@ -34,11 +34,17 @@ header('Content-Type: application/json; charset=utf-8');
 try {
     // Charger la configuration de base de données
     require_once __DIR__ . '/../config/db.php';
+    require_once __DIR__ . '/attribution_helper.php';
     
     // Récupérer les paramètres GET
     $id_salle = isset($_GET['id_salle']) ? intval($_GET['id_salle']) : null;
     $etat = isset($_GET['etat']) ? strtolower(trim($_GET['etat'])) : null;
     
+    $reattribution = null;
+    if ($etat === 'libre') {
+        $reattribution = attributionReactivateWaitingForSalle($pdo, (int)$id_salle, null, null, null, null, 'IoT');
+    }
+
     // =========================================================================
     // VALIDATION DES PARAMÈTRES
     // =========================================================================
@@ -177,6 +183,7 @@ try {
             'id_salle' => intval($id_salle),
             'nom_salle' => $salle['nom_salle'],
             'etat' => $etat,
+            'horaire_reattribue' => $reattribution ? (int)$reattribution['id_horaire'] : null,
             'timestamp' => date('Y-m-d H:i:s'),
             'action' => $action
         ]

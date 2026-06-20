@@ -1,6 +1,7 @@
 <?php
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 require_once '../config/db.php';
+require_once __DIR__ . '/attribution_helper.php';
 
 $data = json_decode(file_get_contents("php://input"), true);
 
@@ -12,56 +13,57 @@ if (!$data || !isset($data['id_horaire'])) {
 
 try {
     $pdo->beginTransaction();
-    
-    $id_horaire = $data['id_horaire'];
-    
-    // Récupérer l'horaire avant suppression pour libérer la salle
-    $sql = "SELECT id_salle FROM horaires WHERE id_horaire = ?";
-    $stmt = $pdo->prepare($sql);
+
+    $id_horaire = (int)$data['id_horaire'];
+
+    $stmt = $pdo->prepare("SELECT id_salle FROM horaires WHERE id_horaire = ?");
     $stmt->execute([$id_horaire]);
     $horaire = $stmt->fetch(PDO::FETCH_ASSOC);
-    
+
     if (!$horaire) {
-        http_response_code(404);
         $pdo->rollBack();
-        echo json_encode(['status' => 'error', 'message' => 'Horaire non trouvé']);
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'message' => 'Horaire non trouve']);
         exit;
     }
-    
-    $id_salle = $horaire['id_salle'];
-    
-    // Supprimer l'horaire
-    $deleteSQL = "DELETE FROM horaires WHERE id_horaire = ?";
-    $deleteStmt = $pdo->prepare($deleteSQL);
+
+    $id_salle = (int)$horaire['id_salle'];
+
+    $deleteStmt = $pdo->prepare("DELETE FROM horaires WHERE id_horaire = ?");
     $deleteStmt->execute([$id_horaire]);
-    
-    // Vérifier s'il y a d'autres horaires pour cette salle
-    $checkSQL = "SELECT COUNT(*) as count FROM horaires WHERE id_salle = ?";
-    $checkStmt = $pdo->prepare($checkSQL);
+
+    $checkStmt = $pdo->prepare("
+        SELECT COUNT(*) AS total
+        FROM horaires
+        WHERE id_salle = ?
+          AND statut IN ('actif', 'en_cours')
+    ");
     $checkStmt->execute([$id_salle]);
-    $result = $checkStmt->fetch(PDO::FETCH_ASSOC);
-    
-    // Si aucun autre horaire, marquer la salle comme libre
-    if ($result['count'] == 0) {
-        $updateEtatSQL = "UPDATE etat_salles SET etat = 'libre', date_update = NOW(), modified_by = 'Admin' WHERE id_salle = ?";
-        $updateEtatStmt = $pdo->prepare($updateEtatSQL);
-        $updateEtatStmt->execute([$id_salle]);
-        
-        // Ajouter à l'historique
-        try {
-            $histSQL = "INSERT INTO etat_salles_history (id_salle, etat_ancien, etat_nouveau, modified_by, raison) VALUES (?, 'réservée', 'libre', 'Admin', 'Suppression d\\'horaire')";
-            $histStmt = $pdo->prepare($histSQL);
-            $histStmt->execute([$id_salle]);
-        } catch (Exception $e) {
-            // Historique optionnel
-        }
+
+    $reattribution = null;
+    if ((int)$checkStmt->fetchColumn() === 0) {
+        attributionUpdateSalleEtat($pdo, $id_salle, 'libre', 'Admin', "Suppression d'horaire");
+        $reattribution = attributionReactivateWaitingForSalle(
+            $pdo,
+            $id_salle,
+            null,
+            null,
+            null,
+            null,
+            'Admin'
+        );
     }
-    
+
     $pdo->commit();
-    echo json_encode(['status' => 'success', 'message' => 'Horaire supprimé avec succès']);
-    
-} catch (PDOException $e) {
-    $pdo->rollBack();
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Horaire supprime avec succes',
+        'horaire_reattribue' => $reattribution ? (int)$reattribution['id_horaire'] : null
+    ]);
+} catch (Exception $e) {
+    if ($pdo->inTransaction()) {
+        $pdo->rollBack();
+    }
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Erreur BD: ' . $e->getMessage()]);
 }

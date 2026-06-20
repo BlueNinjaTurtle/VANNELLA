@@ -8,7 +8,7 @@ $(document).ready(function() {
     let selectedSallePending = false;
     let allPromotions = [];
     let allCours = [];
-    const joursSemaine = ['', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    const joursSemaine = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
 
     function todayIsoDate() {
         const now = new Date();
@@ -28,42 +28,69 @@ $(document).ready(function() {
         }
     }
 
-    // Charger les cours et promotions au démarrage
+    function renderSuggestions(suggestions) {
+        if (!suggestions || suggestions.length === 0) {
+            return '<div class="small opacity-75 mt-2">Aucun autre creneau compatible trouve.</div>';
+        }
+
+        const buttons = suggestions.map(s => `
+            <button type="button"
+                    class="btn btn-sm btn-light text-start w-100 mb-2 btn-slot-suggestion"
+                    data-id-salle="${s.id_salle}"
+                    data-nom-salle="${s.nom_salle}"
+                    data-capacite="${s.capacite}"
+                    data-batiment="${s.batiment || ''}"
+                    data-date-cours="${s.date_cours}"
+                    data-jour="${s.jour}"
+                    data-heure-debut="${s.heure_debut}"
+                    data-heure-fin="${s.heure_fin}">
+                <strong>${s.jour} ${s.date_cours}</strong><br>
+                <span>${s.heure_debut} - ${s.heure_fin} - ${s.nom_salle} (${s.capacite} places)</span>
+            </button>
+        `).join('');
+
+        return `
+            <div class="small fw-bold mt-3 mb-2">Creneaux suggeres</div>
+            ${buttons}
+        `;
+    }
+
     init();
 
     function init() {
-        // Charger tous les cours
         $.getJSON('api/getCours.php', function(res) {
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 allCours = res.data;
                 renderAllCours();
             }
         });
 
-        // Charger Promotions avec départements
         $.getJSON('api/getPromotionsFull.php', function(res) {
-            if(res.status === 'success') {
+            if (res.status === 'success') {
                 allPromotions = res.data;
                 let html = '<option value="">Choisir une promotion...</option>';
                 res.data.forEach(p => {
-                    html += `<option value="${p.id_promotion}" data-dept="${p.id_departement}">${p.nom_promotion} (${p.effectif} étud.)</option>`;
+                    html += `<option value="${p.id_promotion}" data-dept="${p.id_departement}">${p.nom_promotion} (${p.effectif} etud.)</option>`;
                 });
                 $('#select-promotion').html(html);
-                
-                // Ajouter l'événement de changement
+
                 $('#select-promotion').on('change', function() {
                     filterCoursByDepartment();
                 });
             }
         });
 
-        // Charger les horaires existants
         loadHoraires();
         $('#date-cours').val(todayIsoDate());
         syncJourFromDate();
         $('#date-cours').on('change', syncJourFromDate);
-        
-        $('#current-date').text(new Date().toLocaleDateString('fr-FR', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }));
+
+        $('#current-date').text(new Date().toLocaleDateString('fr-FR', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        }));
     }
 
     function renderAllCours() {
@@ -76,41 +103,35 @@ $(document).ready(function() {
 
     function filterCoursByDepartment() {
         const selectedPromoId = $('#select-promotion').val();
-        
-        if(!selectedPromoId) {
+
+        if (!selectedPromoId) {
             renderAllCours();
             return;
         }
 
-        // Trouver le département de la promotion sélectionnée
         const promo = allPromotions.find(p => p.id_promotion == selectedPromoId);
-        if(!promo) {
+        if (!promo) {
             renderAllCours();
             return;
         }
 
         const deptId = promo.id_departement;
-
-        // Filtrer les cours du même département
         let html = '<option value="">Choisir un cours...</option>';
-        
-        // D'abord les cours assignés au département
+
         allCours.filter(c => c.id_departement == deptId).forEach(c => {
-            html += `<option value="${c.id_cours}" data-dept="${c.id_departement}">${c.nom_cours} (${c.enseignant}) <span class="badge badge-info">Dept.</span></option>`;
+            html += `<option value="${c.id_cours}" data-dept="${c.id_departement}">${c.nom_cours} (${c.enseignant}) Dept.</option>`;
         });
 
-        // Puis les cours non assignés
         allCours.filter(c => !c.id_departement).forEach(c => {
-            html += `<option value="${c.id_cours}" data-dept="">↳ ${c.nom_cours} (${c.enseignant})</option>`;
+            html += `<option value="${c.id_cours}" data-dept="">${c.nom_cours} (${c.enseignant})</option>`;
         });
 
         $('#select-cours').html(html);
     }
 
-    // Charger et afficher les horaires existants
     function loadHoraires() {
         $.getJSON('api/getHorairesByWeek.php', function(res) {
-            if(res.status === 'success' && res.data.length > 0) {
+            if (res.status === 'success' && res.data.length > 0) {
                 let html = '';
                 res.data.forEach(h => {
                     const heureDebut = h.heure_debut.slice(0, 5);
@@ -118,7 +139,7 @@ $(document).ready(function() {
                     const dateCours = h.date_cours || '';
                     const statut = h.statut || 'actif';
                     const typeCours = h.type_cours || 'specifique';
-                    
+
                     let badgeStatut = '';
                     if (statut === 'annule') {
                         badgeStatut = '<span class="badge bg-danger">Annule</span>';
@@ -131,15 +152,17 @@ $(document).ready(function() {
                     } else {
                         badgeStatut = '<span class="badge bg-success">Actif</span>';
                     }
-                                        if (typeCours === 'ensemble') {
+
+                    if (typeCours === 'ensemble') {
                         badgeStatut += ' <span class="badge bg-info">Ensemble</span>';
                     }
-                    
+
                     const btnStatut = (statut === 'annule')
                         ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'actif')"><i class="fas fa-redo me-1"></i>Reactiver</button>`
                         : (statut === 'actif'
                             ? `<button type="button" class="btn btn-warning btn-sm me-1" onclick="updateHoraireStatus(${h.id_horaire}, 'annule')"><i class="fas fa-ban me-1"></i>Annuler</button>`
                             : '<button type="button" class="btn btn-light btn-sm me-1" disabled><i class="fas fa-lock me-1"></i>Verrouille</button>');
+
                     html += `
                         <tr>
                             <td class="ps-4">${h.nom_cours}</td>
@@ -164,7 +187,7 @@ $(document).ready(function() {
                 $('#table-horaires').html(`
                     <tr>
                         <td colspan="7" class="text-center py-4 text-muted">
-                            <i class="fas fa-inbox me-2"></i>Aucun horaire planifié
+                            <i class="fas fa-inbox me-2"></i>Aucun horaire planifie
                         </td>
                     </tr>
                 `);
@@ -172,9 +195,8 @@ $(document).ready(function() {
         });
     }
 
-    // Fonction globale pour supprimer un horaire
     window.deleteHoraire = function(idHoraire) {
-        if(!confirm("Êtes-vous sûr de vouloir supprimer cet horaire ?")) {
+        if (!confirm("Etes-vous sur de vouloir supprimer cet horaire ?")) {
             return;
         }
 
@@ -184,13 +206,12 @@ $(document).ready(function() {
             data: JSON.stringify({ id_horaire: idHoraire }),
             contentType: 'application/json',
             success: function(res) {
-                if(res.status === 'success') {
-                    alert("Horaire supprimé avec succès !");
+                if (res.status === 'success') {
+                    alert("Horaire supprime avec succes !");
                     loadHoraires();
-                    // Notifier les autres onglets
                     localStorage.setItem('salles_updated', JSON.stringify({
                         timestamp: new Date().getTime(),
-                        message: 'Horaire supprimé'
+                        message: 'Horaire supprime'
                     }));
                 } else {
                     alert("Erreur: " + res.message);
@@ -202,43 +223,40 @@ $(document).ready(function() {
         });
     };
 
-    // Fonction globale pour mettre à jour le statut d'un horaire
     window.updateHoraireStatus = function(idHoraire, nouveauStatut) {
-        const action = nouveauStatut === 'annule' ? 'annuler' : 'réactiver';
-        if(!confirm(`Êtes-vous sûr de vouloir ${action} cet horaire ?`)) {
+        const action = nouveauStatut === 'annule' ? 'annuler' : 'reactiver';
+        if (!confirm(`Etes-vous sur de vouloir ${action} cet horaire ?`)) {
             return;
         }
 
         $.ajax({
             url: 'api/updateHoraireStatus.php',
             method: 'POST',
-            data: JSON.stringify({ 
+            data: JSON.stringify({
                 id_horaire: idHoraire,
                 statut: nouveauStatut
             }),
             contentType: 'application/json',
             success: function(res) {
-                if(res.status === 'success') {
-                    alert(`Horaire ${nouveauStatut === 'annule' ? 'annulé' : 'réactivé'} avec succès !`);
+                if (res.status === 'success') {
+                    alert(`Horaire ${nouveauStatut === 'annule' ? 'annule' : 'reactive'} avec succes !`);
                     loadHoraires();
-                    // Notifier les autres onglets
                     localStorage.setItem('salles_updated', JSON.stringify({
                         timestamp: new Date().getTime(),
-                        message: 'Horaire modifié'
+                        message: 'Horaire modifie'
                     }));
                 } else {
                     alert("Erreur: " + res.message);
                 }
             },
             error: function() {
-                alert("Erreur lors de la mise à jour");
+                alert("Erreur lors de la mise a jour");
             }
         });
     };
 
-    // Fonction globale pour détecter les cours d'ensemble
     window.detectCoursEnsemble = function() {
-        if(!confirm("Analyser les horaires pour détecter les cours d'ensemble ?")) {
+        if (!confirm("Analyser les horaires pour detecter les cours d'ensemble ?")) {
             return;
         }
 
@@ -247,25 +265,23 @@ $(document).ready(function() {
             method: 'GET',
             dataType: 'json',
             success: function(res) {
-                if(res.status === 'success') {
-                    alert(`Détection complétée !\n${res.cours_ensemble_detectes} cours d'ensemble détectés\n${res.horaires_modifies} horaires modifiés`);
+                if (res.status === 'success') {
+                    alert(`Detection completee !\n${res.cours_ensemble_detectes} cours d'ensemble detectes\n${res.horaires_modifies} horaires modifies`);
                     loadHoraires();
-                    // Notifier les autres onglets
                     localStorage.setItem('salles_updated', JSON.stringify({
                         timestamp: new Date().getTime(),
-                        message: 'Cours d\'ensemble détectés'
+                        message: "Cours d'ensemble detectes"
                     }));
                 } else {
                     alert("Erreur: " + res.message);
                 }
             },
             error: function() {
-                alert("Erreur lors de la détection");
+                alert("Erreur lors de la detection");
             }
         });
     };
 
-    // Algorithme d'optimisation
     $('#btn-optimize').on('click', function() {
         const promoId = $('#select-promotion').val();
         const dateCours = $('#date-cours').val();
@@ -273,7 +289,7 @@ $(document).ready(function() {
         const debut = $('#heure-debut').val();
         const fin = $('#heure-fin').val();
 
-        if(!promoId || !dateCours || !jour || !debut || !fin) {
+        if (!promoId || !dateCours || !jour || !debut || !fin) {
             alert("Veuillez remplir tous les champs avant de lancer l'optimisation.");
             return;
         }
@@ -289,19 +305,23 @@ $(document).ready(function() {
             heure_fin: fin
         }, function(res) {
             $btn.prop('disabled', false).html('<i class="fas fa-magic me-1"></i> Attribution Optimale');
-            
-            if(res.status === 'success') {
+
+            if (res.status === 'success') {
                 const salle = res.data;
+                const suggestionsHtml = salle.pending_assignment ? renderSuggestions(res.suggestions || []) : '';
                 selectedSalleId = salle.id_salle;
                 selectedSallePending = !!salle.pending_assignment;
                 const replacementInfo = salle.replaces_existing
                     ? ' <span class="badge bg-warning text-dark">remplace un horaire</span>'
                     : (salle.pending_assignment ? ' <span class="badge bg-warning text-dark">en attente</span>' : '');
+
                 $('#selected-room-info').html(`${salle.nom_salle} (${salle.capacite} places, ${salle.batiment})${replacementInfo}`);
                 $('#optimization-log').html(`
                     <div class="alert ${salle.pending_assignment ? 'alert-warning' : 'alert-success'} py-2 small">
-                        <i class="fas fa-check-circle me-1"></i> Salle optimale trouvée !
+                        <i class="fas ${salle.pending_assignment ? 'fa-clock' : 'fa-check-circle'} me-1"></i>
+                        ${salle.pending_assignment ? 'Toutes les salles sont occupees sur ce creneau. Choisis une suggestion ou enregistre en attente.' : 'Salle optimale trouvee !'}
                     </div>
+                    ${suggestionsHtml}
                 `);
             } else {
                 selectedSalleId = null;
@@ -313,14 +333,37 @@ $(document).ready(function() {
                     </div>
                 `);
             }
+        }).fail(function() {
+            $btn.prop('disabled', false).html('<i class="fas fa-magic me-1"></i> Attribution Optimale');
+            alert("Erreur lors de l'optimisation");
         });
     });
 
-    // Enregistrement
+    $(document).on('click', '.btn-slot-suggestion', function() {
+        const $btn = $(this);
+        selectedSalleId = $btn.data('id-salle');
+        selectedSallePending = false;
+
+        $('#date-cours').val($btn.data('date-cours'));
+        $('#select-jour').val($btn.data('jour'));
+        $('#heure-debut').val($btn.data('heure-debut'));
+        $('#heure-fin').val($btn.data('heure-fin'));
+
+        const nomSalle = $btn.data('nom-salle');
+        const capacite = $btn.data('capacite');
+        const batiment = $btn.data('batiment');
+        $('#selected-room-info').html(`${nomSalle} (${capacite} places${batiment ? ', ' + batiment : ''}) <span class="badge bg-success">suggestion choisie</span>`);
+        $('#optimization-log').html(`
+            <div class="alert alert-success py-2 small">
+                <i class="fas fa-check-circle me-1"></i> Creneau suggere applique.
+            </div>
+        `);
+    });
+
     $('#planning-form').on('submit', function(e) {
         e.preventDefault();
 
-        if(!selectedSalleId) {
+        if (!selectedSalleId) {
             alert("Veuillez d'abord lancer l'attribution optimale pour choisir une salle.");
             return;
         }
@@ -342,21 +385,24 @@ $(document).ready(function() {
             data: JSON.stringify(data),
             contentType: 'application/json',
             success: function(res) {
-                if(res.status === 'success') {
-                    const annulationMessage = res.horaires_en_attente > 0
-                        ? `\n${res.horaires_en_attente} ancien(s) horaire(s) mis en attente automatiquement.`
+                if (res.status === 'success') {
+                    const attenteMessage = res.horaires_en_attente > 0
+                        ? `\n${res.horaires_en_attente} horaire(s) mis en attente automatiquement.`
                         : '';
-                    // Signaler aux autres onglets/fenêtres que les salles ont changé
                     localStorage.setItem('salles_updated', JSON.stringify({
                         timestamp: new Date().getTime(),
-                        message: 'Nouvel horaire ajouté'
+                        message: 'Nouvel horaire ajoute'
                     }));
-                    
-                    alert("Planning enregistré avec succès !" + annulationMessage);
+
+                    alert("Planning enregistre avec succes !" + attenteMessage);
                     location.reload();
                 } else {
                     alert("Erreur: " + res.message);
                 }
+            },
+            error: function(xhr) {
+                const res = xhr.responseJSON;
+                alert("Erreur: " + (res && res.message ? res.message : "Enregistrement impossible"));
             }
         });
     });

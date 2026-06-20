@@ -54,7 +54,7 @@ function updateSalleEtatMaintenance(PDO $pdo, int $idSalle, string $etat, string
     }
 }
 
-function releaseSalleIfNoCurrentCourse(PDO $pdo, int $idSalle, string $raison): void {
+function releaseSalleIfNoCurrentCourse(PDO $pdo, int $idSalle, string $raison): bool {
     $stmt = $pdo->prepare("
         SELECT COUNT(*) AS total
         FROM horaires
@@ -68,7 +68,10 @@ function releaseSalleIfNoCurrentCourse(PDO $pdo, int $idSalle, string $raison): 
 
     if ($total === 0) {
         updateSalleEtatMaintenance($pdo, $idSalle, 'libre', $raison);
+        return true;
     }
+
+    return false;
 }
 
 function releaseSalleIfNoActiveScheduleFromWeek(PDO $pdo, int $idSalle, string $weekStart, string $raison): void {
@@ -156,18 +159,20 @@ try {
         $stmt->execute($ids);
 
         foreach ($lateHoraires as $horaire) {
-            releaseSalleIfNoCurrentCourse($pdo, (int)$horaire['id_salle'], 'Cours annule automatiquement apres 15 minutes de retard');
-            $reattribution = attributionReactivateWaitingForSalle(
-                $pdo,
-                (int)$horaire['id_salle'],
-                $horaire['date_cours'],
-                $horaire['jour'],
-                $horaire['heure_debut'],
-                $horaire['heure_fin'],
-                'System'
-            );
-            if ($reattribution) {
-                $horairesReattribues[] = (int)$reattribution['id_horaire'];
+            $salleLiberee = releaseSalleIfNoCurrentCourse($pdo, (int)$horaire['id_salle'], 'Cours annule automatiquement apres 15 minutes de retard');
+            if ($salleLiberee) {
+                $reattribution = attributionReactivateWaitingForSalle(
+                    $pdo,
+                    (int)$horaire['id_salle'],
+                    null,
+                    null,
+                    null,
+                    null,
+                    'System'
+                );
+                if ($reattribution) {
+                    $horairesReattribues[] = (int)$reattribution['id_horaire'];
+                }
             }
         }
     }
@@ -179,7 +184,21 @@ try {
         $stmt->execute($ids);
 
         foreach ($endedHoraires as $horaire) {
-            releaseSalleIfNoCurrentCourse($pdo, (int)$horaire['id_salle'], 'Cours termine automatiquement en fin de creneau');
+            $salleLiberee = releaseSalleIfNoCurrentCourse($pdo, (int)$horaire['id_salle'], 'Cours termine automatiquement en fin de creneau');
+            if ($salleLiberee) {
+                $reattribution = attributionReactivateWaitingForSalle(
+                    $pdo,
+                    (int)$horaire['id_salle'],
+                    null,
+                    null,
+                    null,
+                    null,
+                    'System'
+                );
+                if ($reattribution) {
+                    $horairesReattribues[] = (int)$reattribution['id_horaire'];
+                }
+            }
         }
     }
 

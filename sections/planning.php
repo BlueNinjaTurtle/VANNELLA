@@ -35,6 +35,7 @@
                             <option value="Jeudi">Jeudi</option>
                             <option value="Vendredi">Vendredi</option>
                             <option value="Samedi">Samedi</option>
+                            <option value="Dimanche">Dimanche</option>
                         </select>
                     </div>
                     <div class="col-md-3">

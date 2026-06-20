@@ -44,6 +44,7 @@ if (!isset($_SESSION['admin_id'])) {
 
 try {
     require_once __DIR__ . '/../config/db.php';
+    require_once __DIR__ . '/attribution_helper.php';
     
     // Récupérer les données
     $input = json_decode(file_get_contents('php://input'), true);
@@ -136,6 +137,11 @@ try {
         VALUES (?, ?, ?, 'Admin', ?)
     ");
     $hist->execute([$id_salle, $etat_ancien, $etat, $raison]);
+
+    $reattribution = null;
+    if ($etat === 'libre') {
+        $reattribution = attributionReactivateWaitingForSalle($pdo, (int)$id_salle, null, null, null, null, 'Admin');
+    }
     
     // =========================================================================
     // RETOURNER LE SUCCÈS
@@ -152,6 +158,7 @@ try {
             'etat_nouveau' => $etat,
             'modified_by' => 'Admin',
             'raison' => $raison,
+            'horaire_reattribue' => $reattribution ? (int)$reattribution['id_horaire'] : null,
             'timestamp' => date('Y-m-d H:i:s'),
             'action' => $action
         ]

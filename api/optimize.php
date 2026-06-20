@@ -23,6 +23,140 @@ function isPromotionEnsemble(array $promotion): bool {
     return strpos($label, 'toutes') !== false || strpos($label, 'tous') !== false;
 }
 
+function canReplaceConflict(array $newPromotion, string $newTypeCours, array $conflict): bool {
+    $newIsEnsemble = $newTypeCours === 'ensemble';
+    $conflictIsEnsemble = ($conflict['type_cours'] ?? 'specifique') === 'ensemble';
+
+    if ($newIsEnsemble && !$conflictIsEnsemble) {
+        return true;
+    }
+
+    if (!$newIsEnsemble && $conflictIsEnsemble) {
+        return false;
+    }
+
+    return promotionPriority($newPromotion) > promotionPriority($conflict);
+}
+
+function minutesFromTime(string $time): int {
+    [$hours, $minutes] = array_map('intval', explode(':', substr($time, 0, 5)));
+    return $hours * 60 + $minutes;
+}
+
+function timeFromMinutes(int $minutes): string {
+    return sprintf('%02d:%02d', intdiv($minutes, 60), $minutes % 60);
+}
+
+function frenchDayName(DateTime $date): string {
+    $jours = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+    return $jours[(int)$date->format('w')];
+}
+
+function roomHasActiveConflict(PDO $pdo, int $idSalle, string $dateCours, string $jour, string $heureDebut, string $heureFin): bool {
+    $stmt = $pdo->prepare("
+        SELECT COUNT(*) AS total
+        FROM horaires h
+        WHERE h.id_salle = ?
+          AND h.date_cours = ?
+          AND h.jour = ?
+          AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours')
+          AND (
+              (h.heure_debut <= ? AND h.heure_fin > ?) OR
+              (h.heure_debut < ? AND h.heure_fin >= ?) OR
+              (? <= h.heure_debut AND ? >= h.heure_fin)
+          )
+    ");
+    $stmt->execute([
+        $idSalle,
+        $dateCours,
+        $jour,
+        $heureDebut,
+        $heureDebut,
+        $heureFin,
+        $heureFin,
+        $heureDebut,
+        $heureFin
+    ]);
+
+    return (int)$stmt->fetchColumn() > 0;
+}
+
+function buildSlotSuggestions(PDO $pdo, array $salles, string $dateCours, string $heureDebut, string $heureFin, int $limit = 6): array {
+    if (!$salles) {
+        return [];
+    }
+
+    $duration = minutesFromTime($heureFin) - minutesFromTime($heureDebut);
+    if ($duration <= 0) {
+        return [];
+    }
+
+    $requestedStart = minutesFromTime($heureDebut);
+    $dayStart = 8 * 60;
+    $dayEnd = 17 * 60 + 30;
+    $candidateStarts = array_unique([
+        $requestedStart,
+        8 * 60,
+        9 * 60,
+        10 * 60,
+        11 * 60,
+        13 * 60,
+        14 * 60
+    ]);
+    sort($candidateStarts);
+
+    $baseDate = new DateTime($dateCours);
+    $suggestions = [];
+    $seen = [];
+
+    for ($offset = 0; $offset < 7 && count($suggestions) < $limit; $offset++) {
+        $candidateDate = clone $baseDate;
+        $candidateDate->modify("+{$offset} day");
+        $candidateDateValue = $candidateDate->format('Y-m-d');
+        $candidateJour = frenchDayName($candidateDate);
+
+        foreach ($candidateStarts as $startMinutes) {
+            $endMinutes = $startMinutes + $duration;
+            if ($startMinutes < $dayStart || $endMinutes > $dayEnd) {
+                continue;
+            }
+
+            $candidateDebut = timeFromMinutes($startMinutes);
+            $candidateFin = timeFromMinutes($endMinutes);
+
+            foreach ($salles as $salle) {
+                $idSalle = (int)$salle['id_salle'];
+                if (roomHasActiveConflict($pdo, $idSalle, $candidateDateValue, $candidateJour, $candidateDebut, $candidateFin)) {
+                    continue;
+                }
+
+                $key = $candidateDateValue . '|' . $candidateDebut . '|' . $candidateFin . '|' . $idSalle;
+                if (isset($seen[$key])) {
+                    continue;
+                }
+                $seen[$key] = true;
+
+                $suggestions[] = [
+                    'id_salle' => $idSalle,
+                    'nom_salle' => $salle['nom_salle'],
+                    'capacite' => (int)$salle['capacite'],
+                    'batiment' => $salle['batiment'],
+                    'date_cours' => $candidateDateValue,
+                    'jour' => $candidateJour,
+                    'heure_debut' => $candidateDebut,
+                    'heure_fin' => $candidateFin
+                ];
+
+                if (count($suggestions) >= $limit) {
+                    break 3;
+                }
+            }
+        }
+    }
+
+    return $suggestions;
+}
+
 $id_promotion = $_GET['id_promotion'] ?? null;
 $date_cours = $_GET['date_cours'] ?? date('Y-m-d');
 $jour = $_GET['jour'] ?? null;
@@ -52,8 +186,8 @@ try {
     }
 
     $effectif = (int)$promo['effectif'];
-    $newPriority = promotionPriority($promo);
     $isEnsemble = isPromotionEnsemble($promo);
+    $newTypeCours = $isEnsemble ? 'ensemble' : 'specifique';
 
     $sqlSallesDispo = "
         SELECT s.* FROM salles s
@@ -99,7 +233,7 @@ try {
         $salles = $stmtSalles->fetchAll();
 
         $sqlConflicts = "
-            SELECT h.id_horaire, p.nom_promotion, p.filiere, p.niveau
+            SELECT h.id_horaire, h.type_cours, p.nom_promotion, p.filiere, p.niveau
             FROM horaires h
             JOIN promotions p ON h.id_promotion = p.id_promotion
             WHERE h.id_salle = ?
@@ -135,7 +269,7 @@ try {
 
             $canReplace = true;
             foreach ($conflicts as $conflict) {
-                if (!$isEnsemble && $newPriority <= promotionPriority($conflict)) {
+                if (!canReplaceConflict($promo, $newTypeCours, $conflict)) {
                     $canReplace = false;
                     break;
                 }
@@ -149,9 +283,12 @@ try {
         }
     }
 
+    $suggestions = [];
+
     if (!$bestSalle && !empty($salles)) {
         $bestSalle = $salles[0];
         $bestSalle['pending_assignment'] = true;
+        $suggestions = buildSlotSuggestions($pdo, $salles, $date_cours, $heure_debut, $heure_fin);
     }
 
     if (!$bestSalle) {
@@ -159,7 +296,7 @@ try {
         exit;
     }
 
-    echo json_encode(['status' => 'success', 'data' => $bestSalle]);
+    echo json_encode(['status' => 'success', 'data' => $bestSalle, 'suggestions' => $suggestions]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);

@@ -30,7 +30,7 @@ try {
     }
 
     $conflictStmt = $pdo->prepare("
-        SELECT h.id_horaire, p.nom_promotion, p.filiere, p.niveau
+        SELECT h.id_horaire, h.type_cours, p.nom_promotion, p.filiere, p.niveau
         FROM horaires h
         JOIN promotions p ON h.id_promotion = p.id_promotion
         WHERE h.id_salle = ?
@@ -56,17 +56,14 @@ try {
     ]);
     $conflicts = $conflictStmt->fetchAll();
 
-    $newPriority = attributionPromotionPriority($newPromo);
     $isEnsemble = attributionIsPromotionEnsemble($newPromo);
-    $canReplaceConflicts = $isEnsemble;
+    $newTypeCours = $isEnsemble ? 'ensemble' : 'specifique';
+    $canReplaceConflicts = true;
 
-    if (!$canReplaceConflicts) {
-        $canReplaceConflicts = true;
-        foreach ($conflicts as $conflict) {
-            if ($newPriority <= attributionPromotionPriority($conflict)) {
-                $canReplaceConflicts = false;
-                break;
-            }
+    foreach ($conflicts as $conflict) {
+        if (!attributionCanReplaceConflict($newPromo, $newTypeCours, $conflict)) {
+            $canReplaceConflicts = false;
+            break;
         }
     }
 
@@ -95,7 +92,7 @@ try {
         'heure_debut' => $data['heure_debut'],
         'heure_fin' => $data['heure_fin'],
         'id_salle' => $data['id_salle'],
-        'type_cours' => $isEnsemble ? 'ensemble' : 'specifique',
+        'type_cours' => $newTypeCours,
         'statut' => $statutHoraire
     ]);
 

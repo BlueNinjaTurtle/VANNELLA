@@ -43,6 +43,7 @@ try {
     $id_salle = (int)$horaire['id_salle'];
     $ancien_statut = $horaire['ancien_statut'];
     $reattribution = null;
+    $salleLiberee = false;
 
     $updateStmt = $pdo->prepare("UPDATE horaires SET statut = ? WHERE id_horaire = ?");
     $updateStmt->execute([$statut, $id_horaire]);
@@ -77,17 +78,20 @@ try {
 
         if ((int)$checkStmt->fetchColumn() === 0) {
             attributionUpdateSalleEtat($pdo, $id_salle, 'libre', 'Admin', 'Cours annule');
+            $salleLiberee = true;
         }
 
-        $reattribution = attributionReactivateWaitingForSalle(
-            $pdo,
-            $id_salle,
-            $horaire['date_cours'],
-            $horaire['jour'],
-            $horaire['heure_debut'],
-            $horaire['heure_fin'],
-            'Admin'
-        );
+        if ($salleLiberee) {
+            $reattribution = attributionReactivateWaitingForSalle(
+                $pdo,
+                $id_salle,
+                null,
+                null,
+                null,
+                null,
+                'Admin'
+            );
+        }
     } elseif (($ancien_statut === 'annule' || $ancien_statut === 'annulé') && $statut === 'actif') {
         attributionUpdateSalleEtat($pdo, $id_salle, 'réservée', 'Admin', 'Cours reactive');
     }

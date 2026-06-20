@@ -140,15 +140,30 @@ try {
                     $reattribution = attributionReactivateWaitingForSalle(
                         $pdo,
                         (int)$horaireAnnule['id_salle'],
-                        $horaireAnnule['date_cours'],
-                        $horaireAnnule['jour'],
-                        $horaireAnnule['heure_debut'],
-                        $horaireAnnule['heure_fin'],
+                        null,
+                        null,
+                        null,
+                        null,
                         'IoT'
                     );
                     if ($reattribution) {
                         $horairesReattribues[] = (int)$reattribution['id_horaire'];
                     }
+                }
+            }
+
+            if (empty($horairesReattribues)) {
+                $reattribution = attributionReactivateWaitingForSalle(
+                    $pdo,
+                    $id_salle,
+                    null,
+                    null,
+                    null,
+                    null,
+                    'IoT'
+                );
+                if ($reattribution) {
+                    $horairesReattribues[] = (int)$reattribution['id_horaire'];
                 }
             }
         }

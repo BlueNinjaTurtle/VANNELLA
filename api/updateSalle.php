@@ -1,49 +1,56 @@
 <?php
-// api/updateSalle.php
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 require_once '../config/db.php';
+require_once __DIR__ . '/attribution_helper.php';
 
-// Récupération des données brutes de la requête
-$json = file_get_contents('php://input');
-$data = json_decode($json, true);
+$data = json_decode(file_get_contents('php://input'), true);
 
-if (!$data || !isset($data['id_salle']) || !isset($data['etat'])) {
+if (!$data || !isset($data['id_salle'], $data['etat'])) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Données incomplètes']);
+    echo json_encode(['status' => 'error', 'message' => 'Donnees incompletes']);
     exit;
 }
 
 $id_salle = (int)$data['id_salle'];
-$etat = $data['etat'];
+$etat = (string)$data['etat'];
 
-// Validation de l'état (libre, occupée, réservée, indisponible)
-$valid_states = ['libre', 'occupée', 'réservée', 'indisponible'];
-if (!in_array($etat, $valid_states)) {
+$valid_states = ['libre', 'occupée', 'occupee', 'réservée', 'reservee', 'indisponible'];
+if (!in_array($etat, $valid_states, true)) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'État invalide']);
+    echo json_encode(['status' => 'error', 'message' => 'Etat invalide']);
     exit;
 }
 
+if ($etat === 'occupee') {
+    $etat = 'occupée';
+}
+if ($etat === 'reservee') {
+    $etat = 'réservée';
+}
+
 try {
-    // Mise à jour de l'état de la salle
-    $stmt = $pdo->prepare("UPDATE etat_salles SET etat = ? WHERE id_salle = ?");
+    $stmt = $pdo->prepare("UPDATE etat_salles SET etat = ?, date_update = NOW() WHERE id_salle = ?");
     $stmt->execute([$etat, $id_salle]);
 
-    if ($stmt->rowCount() > 0) {
-        echo json_encode(['status' => 'success', 'message' => 'État de la salle mis à jour']);
-    } else {
-        // Si aucune ligne n'est mise à jour, c'est peut-être que l'ID n'existe pas
-        // ou que l'état est déjà le même. On vérifie l'existence de la salle.
-        $check = $pdo->prepare("SELECT id_salle FROM salles WHERE id_salle = ?");
-        $check->execute([$id_salle]);
-        if ($check->fetch()) {
-            echo json_encode(['status' => 'success', 'message' => 'Aucun changement nécessaire (état identique)']);
-        } else {
-            http_response_code(404);
-            echo json_encode(['status' => 'error', 'message' => 'Salle non trouvée']);
-        }
+    $check = $pdo->prepare("SELECT id_salle FROM salles WHERE id_salle = ?");
+    $check->execute([$id_salle]);
+    if (!$check->fetch()) {
+        http_response_code(404);
+        echo json_encode(['status' => 'error', 'message' => 'Salle non trouvee']);
+        exit;
     }
-} catch (PDOException $e) {
+
+    $reattribution = null;
+    if ($etat === 'libre') {
+        $reattribution = attributionReactivateWaitingForSalle($pdo, $id_salle, null, null, null, null, 'Admin');
+    }
+
+    echo json_encode([
+        'status' => 'success',
+        'message' => 'Etat de la salle mis a jour',
+        'horaire_reattribue' => $reattribution ? (int)$reattribution['id_horaire'] : null
+    ]);
+} catch (Exception $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => 'Erreur serveur: ' . $e->getMessage()]);
 }
