@@ -581,6 +581,10 @@ $emojis = [
                     let courseProchain = null;
                     
                     for (let h of horairesAujourd) {
+                        const statutLoop = (h.statut || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                        if (['annule', 'annulee', 'en_attente', 'termine'].includes(statutLoop)) {
+                            continue;
+                        }
                         if (h.heure_debut <= currentTime && h.heure_fin >= currentTime) {
                             courseEnCours = h;
                             break;
@@ -601,6 +605,8 @@ $emojis = [
                             statusBadge = ' <span style="color: #dc3545; font-weight: 600; font-size: 0.9rem;">Annule</span>';
                         } else if (statutCours === 'en_cours') {
                             statusBadge = ' <span style="color: #0d6efd; font-weight: 600; font-size: 0.9rem;">En cours</span>';
+                        } else if (statutCours === 'en_attente') {
+                            statusBadge = ' <span style="color: #fd7e14; font-weight: 600; font-size: 0.9rem;">En attente</span>';
                         } else if (statutCours === 'termine') {
                             statusBadge = ' <span style="color: #6c757d; font-weight: 600; font-size: 0.9rem;">Termine</span>';
                         }
@@ -616,7 +622,7 @@ $emojis = [
 
                 const horairesActifs = horairesSalle.filter(h => {
                     const statutCours = (h.statut || '').toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                    return statutCours !== 'annule' && statutCours !== 'annulee';
+                    return !['annule', 'annulee', 'en_attente', 'termine'].includes(statutCours);
                 });
 
                 if (horairesActifs.length > 0) {

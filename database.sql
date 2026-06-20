@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS horaires (
     heure_debut TIME NOT NULL,
     heure_fin TIME NOT NULL,
     id_salle INT,
-    statut ENUM('actif', 'en_cours', 'termine', 'annule') DEFAULT 'actif',
+    statut ENUM('actif', 'en_attente', 'en_cours', 'termine', 'annule') DEFAULT 'actif',
     type_cours ENUM('specifique', 'ensemble') DEFAULT 'specifique',
     FOREIGN KEY (id_cours) REFERENCES cours(id_cours),
     FOREIGN KEY (id_promotion) REFERENCES promotions(id_promotion),

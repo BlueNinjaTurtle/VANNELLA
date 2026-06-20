@@ -42,6 +42,9 @@ $(document).ready(function() {
         if (statut === 'en_cours') {
             return ` <span style="color: #0d6efd; font-weight: 600; margin-left: 6px; ${extraStyle}">En cours</span>`;
         }
+        if (statut === 'en_attente') {
+            return ` <span style="color: #fd7e14; font-weight: 600; margin-left: 6px; ${extraStyle}">En attente</span>`;
+        }
         if (statut === 'termine') {
             return ` <span style="color: #6c757d; font-weight: 600; margin-left: 6px; ${extraStyle}">Termine</span>`;
         }

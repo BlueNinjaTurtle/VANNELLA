@@ -5,6 +5,7 @@
  */
 
 require_once '../config/db.php';
+require_once __DIR__ . '/attribution_helper.php';
 
 header('Content-Type: application/json; charset=utf-8');
 date_default_timezone_set('Europe/Paris');
@@ -68,6 +69,7 @@ try {
 
     try {
         $horairesAnnules = [];
+        $horairesReattribues = [];
 
         if ($currentRow) {
             $update = $pdo->prepare("
@@ -93,14 +95,14 @@ try {
 
             if ($id_horaire > 0) {
                 $selectHoraires = $pdo->prepare("
-                    SELECT id_horaire
+                    SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
                     FROM horaires
                     WHERE id_horaire = ?
                       AND id_salle = ?
                       AND statut = 'actif'
                 ");
                 $selectHoraires->execute([$id_horaire, $id_salle]);
-                $horairesAnnules = $selectHoraires->fetchAll(PDO::FETCH_COLUMN);
+                $horairesAnnules = $selectHoraires->fetchAll(PDO::FETCH_ASSOC);
             }
 
             if (empty($horairesAnnules)) {
@@ -113,7 +115,7 @@ try {
                     : "heure_debut >= '12:00:00'";
 
                 $selectHoraires = $pdo->prepare("
-                    SELECT id_horaire
+                    SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
                     FROM horaires
                     WHERE id_salle = ?
                       AND jour = ?
@@ -121,17 +123,33 @@ try {
                       AND statut = 'actif'
                 ");
                 $selectHoraires->execute([$id_salle, $jourActuel]);
-                $horairesAnnules = $selectHoraires->fetchAll(PDO::FETCH_COLUMN);
+                $horairesAnnules = $selectHoraires->fetchAll(PDO::FETCH_ASSOC);
             }
 
             if (!empty($horairesAnnules)) {
+                $horairesAnnulesIds = array_column($horairesAnnules, 'id_horaire');
                 $placeholders = implode(',', array_fill(0, count($horairesAnnules), '?'));
                 $annulerHoraires = $pdo->prepare("
                     UPDATE horaires
                     SET statut = 'annule'
                     WHERE id_horaire IN ($placeholders)
                 ");
-                $annulerHoraires->execute($horairesAnnules);
+                $annulerHoraires->execute($horairesAnnulesIds);
+
+                foreach ($horairesAnnules as $horaireAnnule) {
+                    $reattribution = attributionReactivateWaitingForSalle(
+                        $pdo,
+                        (int)$horaireAnnule['id_salle'],
+                        $horaireAnnule['date_cours'],
+                        $horaireAnnule['jour'],
+                        $horaireAnnule['heure_debut'],
+                        $horaireAnnule['heure_fin'],
+                        'IoT'
+                    );
+                    if ($reattribution) {
+                        $horairesReattribues[] = (int)$reattribution['id_horaire'];
+                    }
+                }
             }
         }
 
@@ -158,6 +176,7 @@ try {
         'id_salle' => $id_salle,
         'etat' => $etat_labels[$etat_key],
         'horaires_annules' => count($horairesAnnules),
+        'horaires_reattribues' => $horairesReattribues,
         'timestamp' => date('Y-m-d H:i:s')
     ], JSON_UNESCAPED_UNICODE);
 } catch (Exception $e) {

@@ -70,7 +70,7 @@ $(document).ready(function() {
                         </td>
                         <td class="pe-4 text-end">
                             <div class="btn-group">
-                                <button class="btn btn-sm btn-white border shadow-sm btn-edit-cours px-3" data-cours='${JSON.stringify(c)}' data-bs-toggle="modal" data-bs-target="#modalCours" title="Modifier">
+                                <button class="btn btn-sm btn-white border shadow-sm btn-edit-cours px-3" data-id="${c.id_cours}" data-bs-toggle="modal" data-bs-target="#modalCours" title="Modifier">
                                     <i class="fas fa-pen text-primary"></i>
                                 </button>
                                 <button class="btn btn-sm btn-white border shadow-sm btn-delete-cours px-3 ms-2" data-id="${c.id_cours}" title="Supprimer">
@@ -94,7 +94,10 @@ $(document).ready(function() {
     $('#modalCours').on('show.bs.modal', function (event) {
         const button = $(event.relatedTarget);
         if (button.hasClass('btn-edit-cours')) {
-            const c = button.data('cours');
+            const c = allCours.find(cours => cours.id_cours == button.data('id'));
+            if (!c) {
+                return;
+            }
             $('#cours-id').val(c.id_cours);
             $('#cours-nom').val(c.nom_cours);
             $('#cours-enseignant').val(c.enseignant);
@@ -132,6 +135,10 @@ $(document).ready(function() {
                 } else {
                     alert("Erreur: " + res.message);
                 }
+            },
+            error: function(xhr) {
+                const res = xhr.responseJSON;
+                alert("Erreur: " + (res && res.message ? res.message : "Modification impossible"));
             }
         });
     });

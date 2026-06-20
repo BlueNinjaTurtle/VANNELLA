@@ -8,6 +8,7 @@
 
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/config/db.php';
+require_once __DIR__ . '/api/attribution_helper.php';
 
 $dryRun = (PHP_SAPI === 'cli' && in_array('--dry-run', $argv ?? [], true))
     || isset($_GET['dry_run']);
@@ -92,7 +93,7 @@ try {
     $weekStart = $pdo->query("SELECT DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)")->fetchColumn();
 
     $oldStmt = $pdo->prepare("
-        SELECT id_horaire, id_salle
+        SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
         FROM horaires
         WHERE date_cours < ?
     ");
@@ -100,7 +101,7 @@ try {
     $oldHoraires = $oldStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $lateStmt = $pdo->prepare("
-        SELECT id_horaire, id_salle
+        SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
         FROM horaires
         WHERE statut = 'actif'
           AND date_cours >= ?
@@ -110,7 +111,7 @@ try {
     $lateHoraires = $lateStmt->fetchAll(PDO::FETCH_ASSOC);
 
     $endedStmt = $pdo->prepare("
-        SELECT id_horaire, id_salle
+        SELECT id_horaire, id_salle, date_cours, jour, heure_debut, heure_fin
         FROM horaires
         WHERE statut = 'en_cours'
           AND date_cours >= ?
@@ -134,6 +135,8 @@ try {
         exit;
     }
 
+    $horairesReattribues = [];
+
     if ($oldHoraires) {
         $ids = array_column($oldHoraires, 'id_horaire');
         $salleIds = array_unique(array_map('intval', array_column($oldHoraires, 'id_salle')));
@@ -154,6 +157,18 @@ try {
 
         foreach ($lateHoraires as $horaire) {
             releaseSalleIfNoCurrentCourse($pdo, (int)$horaire['id_salle'], 'Cours annule automatiquement apres 15 minutes de retard');
+            $reattribution = attributionReactivateWaitingForSalle(
+                $pdo,
+                (int)$horaire['id_salle'],
+                $horaire['date_cours'],
+                $horaire['jour'],
+                $horaire['heure_debut'],
+                $horaire['heure_fin'],
+                'System'
+            );
+            if ($reattribution) {
+                $horairesReattribues[] = (int)$reattribution['id_horaire'];
+            }
         }
     }
 
@@ -177,7 +192,8 @@ try {
         'cours_termines' => count($endedHoraires),
         'horaires_supprimes' => array_map('intval', array_column($oldHoraires, 'id_horaire')),
         'horaires_annules' => array_map('intval', array_column($lateHoraires, 'id_horaire')),
-        'horaires_termines' => array_map('intval', array_column($endedHoraires, 'id_horaire'))
+        'horaires_termines' => array_map('intval', array_column($endedHoraires, 'id_horaire')),
+        'horaires_reattribues' => $horairesReattribues
     ]);
 } catch (Exception $e) {
     if ($pdo->inTransaction()) {

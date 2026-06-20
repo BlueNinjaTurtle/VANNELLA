@@ -3,7 +3,7 @@
  * api/optimize.php
  * Algorithme d'attribution optimale de salle.
  */
-header('Content-Type: application/json');
+header('Content-Type: application/json; charset=utf-8');
 require_once '../config/db.php';
 
 function promotionPriority(array $promotion): int {
@@ -31,7 +31,7 @@ $heure_fin = $_GET['heure_fin'] ?? null;
 
 if (!$id_promotion || !$jour || !$heure_debut || !$heure_fin) {
     http_response_code(400);
-    echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants']);
+    echo json_encode(['status' => 'error', 'message' => 'Parametres manquants']);
     exit;
 }
 
@@ -42,35 +42,32 @@ if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $date_cours)) {
 }
 
 try {
-    // 1. Récupérer l'effectif de la promotion
     $stmtPromo = $pdo->prepare("SELECT nom_promotion, filiere, niveau, effectif FROM promotions WHERE id_promotion = ?");
     $stmtPromo->execute([$id_promotion]);
     $promo = $stmtPromo->fetch();
-    
+
     if (!$promo) {
-        echo json_encode(['status' => 'error', 'message' => 'Promotion non trouvée']);
+        echo json_encode(['status' => 'error', 'message' => 'Promotion non trouvee']);
         exit;
     }
-    
-    $effectif = $promo['effectif'];
+
+    $effectif = (int)$promo['effectif'];
     $newPriority = promotionPriority($promo);
     $isEnsemble = isPromotionEnsemble($promo);
 
-    // 2. Trouver les salles disponibles sur ce créneau horaire
-    // Les cours annules ne bloquent pas la salle.
     $sqlSallesDispo = "
         SELECT s.* FROM salles s
         WHERE s.capacite >= ?
         AND s.id_salle NOT IN (
-                SELECT DISTINCT h.id_salle FROM horaires h
-                WHERE h.date_cours = ?
-                AND h.jour = ?
-                AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
-                AND (
-                    (h.heure_debut <= ? AND h.heure_fin > ?) OR
-                    (h.heure_debut < ? AND h.heure_fin >= ?) OR
-                    (? <= h.heure_debut AND ? >= h.heure_fin)
-                )
+            SELECT DISTINCT h.id_salle FROM horaires h
+            WHERE h.date_cours = ?
+            AND h.jour = ?
+            AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours')
+            AND (
+                (h.heure_debut <= ? AND h.heure_fin > ?) OR
+                (h.heure_debut < ? AND h.heure_fin >= ?) OR
+                (? <= h.heure_debut AND ? >= h.heure_fin)
+            )
         )
         ORDER BY s.capacite ASC
         LIMIT 1
@@ -90,14 +87,14 @@ try {
     ]);
 
     $bestSalle = $stmt->fetch();
+    $salles = [];
 
     if (!$bestSalle) {
-        $sqlSalles = "
+        $stmtSalles = $pdo->prepare("
             SELECT s.* FROM salles s
             WHERE s.capacite >= ?
             ORDER BY s.capacite ASC
-        ";
-        $stmtSalles = $pdo->prepare($sqlSalles);
+        ");
         $stmtSalles->execute([$effectif]);
         $salles = $stmtSalles->fetchAll();
 
@@ -108,7 +105,7 @@ try {
             WHERE h.id_salle = ?
               AND h.date_cours = ?
               AND h.jour = ?
-              AND COALESCE(NULLIF(h.statut, ''), 'actif') = 'actif'
+              AND COALESCE(NULLIF(h.statut, ''), 'actif') IN ('actif', 'en_cours')
               AND (
                   (h.heure_debut <= ? AND h.heure_fin > ?) OR
                   (h.heure_debut < ? AND h.heure_fin >= ?) OR
@@ -152,13 +149,17 @@ try {
         }
     }
 
+    if (!$bestSalle && !empty($salles)) {
+        $bestSalle = $salles[0];
+        $bestSalle['pending_assignment'] = true;
+    }
+
     if (!$bestSalle) {
-        echo json_encode(['status' => 'error', 'message' => 'Aucune salle disponible ou remplaçable pour cet effectif sur ce créneau']);
+        echo json_encode(['status' => 'error', 'message' => 'Aucune salle ne peut contenir cet effectif']);
         exit;
     }
 
     echo json_encode(['status' => 'success', 'data' => $bestSalle]);
-
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);

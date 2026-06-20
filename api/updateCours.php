@@ -16,7 +16,16 @@ try {
     $uid_badge = normalizeOptionalUid($input['uid_badge'] ?? null);
 
     $pdo->beginTransaction();
-    $id_professeur = resolveProfesseurForCours($pdo, $input['enseignant'], $uid_badge);
+    $currentStmt = $pdo->prepare("SELECT id_professeur FROM cours WHERE id_cours = ?");
+    $currentStmt->execute([$input['id_cours']]);
+    $currentCours = $currentStmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$currentCours) {
+        throw new InvalidArgumentException("Cours introuvable");
+    }
+
+    $current_professeur_id = isset($currentCours['id_professeur']) ? (int)$currentCours['id_professeur'] : null;
+    $id_professeur = resolveProfesseurForCours($pdo, $input['enseignant'], $uid_badge, $current_professeur_id);
     
     $stmt = $pdo->prepare("UPDATE cours SET nom_cours = ?, enseignant = ?, id_professeur = ?, id_departement = ? WHERE id_cours = ?");
     $stmt->execute([$input['nom_cours'], trim($input['enseignant']), $id_professeur, $id_departement, $input['id_cours']]);

@@ -5,6 +5,7 @@
 
 $(document).ready(function() {
     let selectedSalleId = null;
+    let selectedSallePending = false;
     let allPromotions = [];
     let allCours = [];
     const joursSemaine = ['', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
@@ -123,6 +124,8 @@ $(document).ready(function() {
                         badgeStatut = '<span class="badge bg-danger">Annule</span>';
                     } else if (statut === 'en_cours') {
                         badgeStatut = '<span class="badge bg-primary">En cours</span>';
+                    } else if (statut === 'en_attente') {
+                        badgeStatut = '<span class="badge bg-warning text-dark">En attente</span>';
                     } else if (statut === 'termine') {
                         badgeStatut = '<span class="badge bg-secondary">Termine</span>';
                     } else {
@@ -290,17 +293,19 @@ $(document).ready(function() {
             if(res.status === 'success') {
                 const salle = res.data;
                 selectedSalleId = salle.id_salle;
+                selectedSallePending = !!salle.pending_assignment;
                 const replacementInfo = salle.replaces_existing
                     ? ' <span class="badge bg-warning text-dark">remplace un horaire</span>'
-                    : '';
+                    : (salle.pending_assignment ? ' <span class="badge bg-warning text-dark">en attente</span>' : '');
                 $('#selected-room-info').html(`${salle.nom_salle} (${salle.capacite} places, ${salle.batiment})${replacementInfo}`);
                 $('#optimization-log').html(`
-                    <div class="alert alert-success py-2 small">
+                    <div class="alert ${salle.pending_assignment ? 'alert-warning' : 'alert-success'} py-2 small">
                         <i class="fas fa-check-circle me-1"></i> Salle optimale trouvée !
                     </div>
                 `);
             } else {
                 selectedSalleId = null;
+                selectedSallePending = false;
                 $('#selected-room-info').html('<span class="text-danger">Aucune salle disponible</span>');
                 $('#optimization-log').html(`
                     <div class="alert alert-danger py-2 small">
@@ -327,7 +332,8 @@ $(document).ready(function() {
             jour: $('#select-jour').val(),
             heure_debut: $('#heure-debut').val(),
             heure_fin: $('#heure-fin').val(),
-            id_salle: selectedSalleId
+            id_salle: selectedSalleId,
+            statut: selectedSallePending ? 'en_attente' : 'actif'
         };
 
         $.ajax({
@@ -337,8 +343,8 @@ $(document).ready(function() {
             contentType: 'application/json',
             success: function(res) {
                 if(res.status === 'success') {
-                    const annulationMessage = res.horaires_annules > 0
-                        ? `\n${res.horaires_annules} ancien(s) horaire(s) annulé(s) automatiquement.`
+                    const annulationMessage = res.horaires_en_attente > 0
+                        ? `\n${res.horaires_en_attente} ancien(s) horaire(s) mis en attente automatiquement.`
                         : '';
                     // Signaler aux autres onglets/fenêtres que les salles ont changé
                     localStorage.setItem('salles_updated', JSON.stringify({

@@ -11,6 +11,11 @@ $id_cours = $_POST['id_cours'];
 
 try {
     $pdo->beginTransaction();
+
+    $coursStmt = $pdo->prepare("SELECT id_professeur FROM cours WHERE id_cours = ?");
+    $coursStmt->execute([$id_cours]);
+    $cours = $coursStmt->fetch(PDO::FETCH_ASSOC);
+    $id_professeur = $cours && !empty($cours['id_professeur']) ? (int)$cours['id_professeur'] : null;
     
     // 1️⃣ Récupérer tous les horaires du cours à supprimer
     $selectSQL = "SELECT id_horaire, id_salle FROM horaires WHERE id_cours = ?";
@@ -55,6 +60,16 @@ try {
     $deleteCoursSQL = "DELETE FROM cours WHERE id_cours = ?";
     $deleteCoursStmt = $pdo->prepare($deleteCoursSQL);
     $deleteCoursStmt->execute([$id_cours]);
+
+    if ($id_professeur) {
+        $countStmt = $pdo->prepare("SELECT COUNT(*) FROM cours WHERE id_professeur = ?");
+        $countStmt->execute([$id_professeur]);
+
+        if ((int)$countStmt->fetchColumn() === 0) {
+            $releaseUidStmt = $pdo->prepare("UPDATE professeurs SET uid_badge = NULL WHERE id_professeur = ?");
+            $releaseUidStmt->execute([$id_professeur]);
+        }
+    }
     
     $pdo->commit();
     
