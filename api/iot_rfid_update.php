@@ -195,13 +195,28 @@ try {
     }
 
     if ($horaire['statut'] === 'en_cours') {
-        setSalleEtat($pdo, (int)$salle['id_salle'], 'occupee', 'Double badgeage RFID ignore');
+        $stmt = $pdo->prepare("UPDATE horaires SET statut = 'termine' WHERE id_horaire = ?");
+        $stmt->execute([$horaire['id_horaire']]);
+
+        setSalleEtat($pdo, (int)$salle['id_salle'], 'libre', 'Cours termine par second badge RFID');
+
+        $reattribution = attributionReactivateWaitingForSalle(
+            $pdo,
+            (int)$salle['id_salle'],
+            null,
+            null,
+            null,
+            null,
+            'IoT'
+        );
+
         $pdo->commit();
-        jsonResponse(200, 'success', 'ALREADY_VALIDATED', 'Cours deja valide', [
+        jsonResponse(200, 'success', 'COURSE_FINISHED', 'Cours termine par second badge RFID et salle liberee', [
             'id_horaire' => (int)$horaire['id_horaire'],
             'professeur' => $professeur['nom_professeur'],
             'cours' => $horaire['nom_cours'],
-            'salle' => $salle['nom_salle']
+            'salle' => $salle['nom_salle'],
+            'horaire_reattribue' => $reattribution ? (int)$reattribution['id_horaire'] : null
         ]);
         exit;
     }
